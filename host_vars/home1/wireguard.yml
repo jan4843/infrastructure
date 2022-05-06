@@ -1,0 +1,2 @@
+wireguard_address: 10.8.0.1
+wireguard_private_key: '{{ secret_wireguard_private_key }}'

@@ -1,0 +1,5 @@
+wireguard_public_key_mac: '{{ secret_wireguard_public_key_mac }}'
+wireguard_public_key_ios: '{{ secret_wireguard_public_key_ios }}'
+wireguard_clients:
+  10.8.0.101: '{{ wireguard_public_key_mac }}'
+  10.8.0.102: '{{ wireguard_public_key_ios }}'

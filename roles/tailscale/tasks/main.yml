@@ -1,0 +1,41 @@
+- name: Add Repository Signing Key
+  apt_key:
+    url: https://pkgs.tailscale.com/stable/{{ ansible_distribution | lower }}/{{ ansible_distribution_release }}.gpg
+
+- name: Add Repository
+  apt_repository:
+    repo: >
+      deb
+      https://pkgs.tailscale.com/stable/{{ ansible_distribution | lower }}
+      {{ ansible_distribution_release }}
+      main
+    filename: tailscale
+
+- name: Install Package
+  apt:
+    name: tailscale
+
+- name: Create Environment File
+  template:
+    src: default.j2
+    dest: /etc/default/tailscale
+    mode: go-r
+  notify: restart_tailscale
+
+- name: Create systemd Drop-In Directory
+  file:
+    path: /etc/systemd/system/tailscaled.service.d
+    state: directory
+
+- name: Copy systemd Drop-In
+  copy:
+    src: up.conf
+    dest: /etc/systemd/system/tailscaled.service.d/up.conf
+
+- name: Enable IP Forwarding
+  sysctl:
+    name: '{{ item }}'
+    value: '1'
+  loop:
+    - net.ipv4.ip_forward
+    - net.ipv6.conf.all.forwarding

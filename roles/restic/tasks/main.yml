@@ -1,0 +1,40 @@
+- name: Install Packages
+  apt:
+    name:
+      - restic
+      - rclone
+
+- name: Create Environment File
+  template:
+    src: default.j2
+    dest: /etc/default/restic
+    mode: go-r
+
+- name: Initialize Repository
+  script: init-repo.sh
+  register: result
+  failed_when:
+    - result.rc != 0
+    - "'already exists' not in result.stdout"
+  changed_when:
+    - result.rc == 0
+
+- name: Restore Backup
+  script: restore.sh {{ inventory_hostname | quote }}
+  register: result
+  changed_when: "'already restored' not in result.stdout"
+
+- name: Create systemd Units
+  template:
+    src: restic.{{ item }}.j2
+    dest: /etc/systemd/system/restic.{{ item }}
+  notify: restart_restic
+  loop:
+    - service
+    - timer
+
+- name: Enable systemd Timer
+  systemd:
+    name: restic.timer
+    enabled: yes
+    state: started

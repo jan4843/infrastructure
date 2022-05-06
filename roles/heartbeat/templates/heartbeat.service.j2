@@ -1,0 +1,5 @@
+[Service]
+ExecStart=sh -c 'while echo "$(curl -s https://hc-ping.com/{{ heartbeat_healthchecks_uuid }})"; do sleep 60; done'
+
+[Install]
+WantedBy=multi-user.target

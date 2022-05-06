@@ -1,0 +1,16 @@
+[Interface]
+Address = {{ wireguard_address }}
+ListenPort = 51820
+PrivateKey = {{ wireguard_private_key }}
+PostUp   = iptables -A FORWARD -i %i -j ACCEPT
+PostDown = iptables -D FORWARD -i %i -j ACCEPT
+PostUp   = iptables -A FORWARD -o %i -j ACCEPT
+PostDown = iptables -D FORWARD -o %i -j ACCEPT
+PostUp   = iptables -t nat -A POSTROUTING -o {{ ansible_default_ipv4.interface }} -j MASQUERADE
+PostDown = iptables -t nat -D POSTROUTING -o {{ ansible_default_ipv4.interface }} -j MASQUERADE
+
+{% for ip, publick_key in wireguard_clients.items() %}
+[Peer]
+PublicKey = {{ publick_key }}
+AllowedIPs = {{ ip }}
+{% endfor %}

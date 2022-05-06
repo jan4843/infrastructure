@@ -1,0 +1,4 @@
+- name: Set Timezone
+  script: set-timezone.sh {{ timezone | quote }}
+  register: result
+  changed_when: "'already set' not in result.stdout"

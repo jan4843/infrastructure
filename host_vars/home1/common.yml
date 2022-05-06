@@ -1,0 +1,7 @@
+timezone: Europe/Vienna
+
+mounts:
+  media:
+    device: /dev/disk/by-label/media
+    mount_point: /media
+    timeout_idle: 15min

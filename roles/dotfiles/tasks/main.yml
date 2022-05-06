@@ -1,0 +1,11 @@
+- name: Install dotfiles
+  script: install-dotfiles.sh {{ dotfiles_repo | quote }}
+  register: result
+  changed_when: "'already' not in result.stdout"
+
+- name: Create .hushlogin
+  file:
+    path: '{{ ansible_user_dir }}/.hushlogin'
+    state: touch
+    modification_time: preserve
+    access_time: preserve
