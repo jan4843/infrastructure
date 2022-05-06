@@ -1,0 +1,6 @@
+- name: Restart
+  listen: restart_tailscale
+  systemd:
+    name: tailscaled.service
+    daemon_reload: yes
+    state: restarted

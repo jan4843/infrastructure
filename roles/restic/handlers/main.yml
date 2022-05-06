@@ -1,0 +1,6 @@
+- name: Restart
+  listen: restart_restic
+  systemd:
+    name: restic.timer
+    daemon_reload: yes
+    state: restarted

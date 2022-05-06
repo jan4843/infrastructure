@@ -1,0 +1,2 @@
+restic_password: '{{ secret_restic_password }}'
+restic_healthchecks_uuid: '{{ secret_restic_healthchecks_uuid }}'

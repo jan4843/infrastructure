@@ -1,0 +1,10 @@
+- hosts: all
+  roles:
+    - common
+    - dotfiles
+    - tailscale
+    - wireguard
+    - heartbeat
+    - restic
+    - docker
+    - services

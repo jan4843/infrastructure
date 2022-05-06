@@ -1,0 +1,23 @@
+- name: Install Package
+  apt:
+    name: wireguard
+
+- name: Create Configuration
+  template:
+    src: wg0.conf.j2
+    dest: /etc/wireguard/wg0.conf
+  notify: restart_wireguard
+
+- name: Enable systemd Service
+  systemd:
+    name: wg-quick@wg0.service
+    enabled: yes
+    state: started
+
+- name: Enable IP Forwarding
+  sysctl:
+    name: '{{ item }}'
+    value: '1'
+  loop:
+    - net.ipv4.ip_forward
+    - net.ipv6.conf.all.forwarding

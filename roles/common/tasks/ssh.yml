@@ -1,0 +1,13 @@
+- name: Add SSH Authorized Keys
+  authorized_key:
+    user: '{{ ansible_user_id }}'
+    key: '{{ ssh_keys }}'
+
+- name: Enable Public Key-Only SSH Login
+  blockinfile:
+    path: /etc/ssh/sshd_config
+    block: |
+      AuthenticationMethods publickey
+      ChallengeResponseAuthentication no
+      PasswordAuthentication no
+  notify: restart_ssh

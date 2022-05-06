@@ -1,0 +1,6 @@
+[Automount]
+Where={{ item.value.mount_point }}
+TimeoutIdleSec={{ item.value.timeout_idle }}
+
+[Install]
+WantedBy=multi-user.target

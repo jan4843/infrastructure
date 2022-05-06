@@ -1,0 +1,7 @@
+- name: Install Dependencies
+  apt:
+    name:
+      - ca-certificates
+      - curl
+      - git
+      - gnupg

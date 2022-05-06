@@ -1,0 +1,5 @@
+tailscale_options:
+  accept_routes: yes
+  advertise_exit_node: yes
+  advertise_routes:
+    - 10.0.0.128/25

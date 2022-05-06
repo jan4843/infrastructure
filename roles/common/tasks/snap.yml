@@ -1,0 +1,10 @@
+- name: Uninstall snap
+  apt:
+    name: snapd
+    purge: yes
+    state: absent
+
+- name: Remove snap Directory
+  file:
+    path: '{{ ansible_user_dir }}/snap'
+    state: absent

@@ -1,0 +1,24 @@
+#jinja2:line_statement_prefix: '#'
+# set backup_options = []
+# for option, value in restic_backup_options.items()
+#   set option = option.replace('_', '-')
+#   set values = value if value is sequence and value is not string else [value]
+#   for value in values
+#     if value is boolean and value
+#       set backup_options = backup_options.append('--' + option)
+#     else
+#       set backup_options = backup_options.append('--' + option + '=' + value)
+#     endif
+#   endfor
+# endfor
+
+RESTIC_REPOSITORY={{ restic_repository | quote }}
+RESTIC_PASSWORD={{ restic_password | quote }}
+RESTIC_BACKUP_OPTIONS={{ backup_options | map('quote') | join(' ') | quote }}
+RESTIC_FILES={{ restic_files | map('quote') | join(' ') | quote }}
+RESTIC_CACHE_DIR=/var/cache/restic
+HEALTHCHECKS_UUID={{ restic_healthchecks_uuid }}
+
+# for key, value in restic_env.items()
+{{ key }}={{ value | quote }}
+# endfor

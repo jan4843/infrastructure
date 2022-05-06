@@ -1,0 +1,13 @@
+#jinja2:line_statement_prefix: '#'
+# set options = []
+# for option, value in tailscale_options.items()
+#   set option = option.replace('_', '-')
+#   set values = value if value is sequence and value is not string else [value]
+#   for value in values
+#     set value = value | string | lower if value is boolean else value
+#     set options = options.append('--' + option + '=' + value)
+#   endfor
+# endfor
+
+TAILSCALE_AUTH_KEY={{ tailscale_auth_key }}
+TAILSCALE_OPTIONS={{ options | map('quote') | join(' ') | quote }}
