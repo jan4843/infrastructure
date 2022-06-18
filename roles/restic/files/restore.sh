@@ -1,12 +1,10 @@
 #!/bin/sh -ae
 
-HOSTNAME=$1
-
 lock_file=/var/lib/restic/restored
 
 if [ -e "$lock_file" ]; then
-    echo "backup already restored"
-    exit
+	echo "backup already restored"
+	exit
 fi
 
 . /etc/default/restic
