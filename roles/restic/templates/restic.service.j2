@@ -1,6 +1,8 @@
 [Service]
 Type=oneshot
 EnvironmentFile=/etc/default/%N
-ExecStartPre=-curl --output /dev/null --silent --retry 3 https://hc-ping.com/${HEALTHCHECKS_UUID}/start
+
 ExecStart=restic backup $RESTIC_BACKUP_OPTIONS $RESTIC_FILES
+
+ExecStartPre=-curl --output /dev/null --silent --retry 3 https://hc-ping.com/${HEALTHCHECKS_UUID}/start
 ExecStopPost=-sh -c 'curl --output /dev/null --silent --retry 3 --data "$(journalctl --output=cat _SYSTEMD_INVOCATION_ID="$(systemctl show -P InvocationID %n)")" https://hc-ping.com/${HEALTHCHECKS_UUID}/${EXIT_STATUS}'
