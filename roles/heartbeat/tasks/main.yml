@@ -1,3 +1,9 @@
+- name: Create Environment File
+  template:
+    src: env.j2
+    dest: /etc/default/heartbeat
+    mode: go-r
+
 - name: Create systemd Service
   template:
     src: heartbeat.service.j2
