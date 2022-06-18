@@ -1,0 +1,6 @@
+[Timer]
+Unit=%N.service
+OnCalendar={{ apt_upgrade_schedule }}
+
+[Install]
+WantedBy=timers.target

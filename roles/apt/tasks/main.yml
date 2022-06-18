@@ -1,0 +1,20 @@
+- name: Create Environment File
+  template:
+    src: default.j2
+    dest: /etc/default/apt-upgrade
+    mode: go-r
+
+- name: Create systemd Units
+  template:
+    src: apt-upgrade.{{ item }}.j2
+    dest: /etc/systemd/system/apt-upgrade.{{ item }}
+  notify: restart_apt_upgrade
+  loop:
+    - service
+    - timer
+
+- name: Enable systemd Timer
+  systemd:
+    name: apt-upgrade.timer
+    enabled: yes
+    state: started
