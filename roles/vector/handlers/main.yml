@@ -1,0 +1,7 @@
+- name: Restart
+  listen: restart_vector
+  systemd:
+    name: vector.service
+    daemon_reload: yes
+    enabled: yes
+    state: restarted

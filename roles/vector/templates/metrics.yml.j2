@@ -1,0 +1,108 @@
+{% raw -%}
+sources:
+  host_metrics_raw:
+    type: host_metrics
+    cgroups:
+      groups:
+        include:
+          - '*docker*'
+    disk:
+      devices:
+        excludes:
+          - loop*
+    filesystem:
+      devices:
+        includes:
+          - '/*'
+{% endraw %}
+      mountpoints:
+        excludes: {{ mounts | default({}) | dict2items | selectattr('value.timeout_idle', 'defined') | map(attribute='value.mount_point') | tojson }}
+{% raw %}
+    network:
+      devices:
+        excludes:
+          - br-*
+          - veth*
+
+transforms:
+  host_metrics:
+    type: lua
+    inputs: [host_metrics_raw]
+    version: '2'
+    hooks:
+      init: init
+      process: process
+    source: |-
+      function init(emit)
+        services_names = {}
+        services_names_count = 0
+        services_root = os.getenv("SERVICES_ROOT"):gsub("/$", "").."/"
+      end
+      function process(event, emit)
+        if event.metric.name:starts_with("cgroup_") then
+          local service = service_name(event.metric.tags.cgroup)
+          if service then
+            event.metric.tags.collector = "container"
+            event.metric.name = event.metric.name:gsub("cgroup_", "container_", 1)
+            event.metric.tags.cgroup = nil
+            event.metric.tags.container = service
+            emit(event)
+          end
+        else
+          emit(event)
+        end
+      end
+      function service_name(cgroup)
+        local container_id = cgroup:match(string.rep("%x", 64))
+        if not container_id then
+          return
+        end
+        local cache = services_names[container_id]
+        if cache then
+          if cache == "" then
+            return nil
+          end
+          return cache
+        end
+        local name = fetch_service_name(container_id)
+        if name then
+          set_cache(container_id, name)
+          return name
+        end
+        set_cache(container_id, "")
+      end
+      function fetch_service_name(container_id)
+        local cmd = [[docker container ps --format '{{.Label "com.docker.compose.service"}}\t{{.Label "com.docker.compose.project.working_dir"}}' --filter id=]]..container_id
+        local handle = io.popen(cmd)
+        local result = handle:read("*a")
+        handle:close()
+        local name, dir = result:match("(.+)\t(.+)")
+        if dir and dir:starts_with(services_root) then
+          return name
+        end
+      end
+      function set_cache(container_id, name)
+        if not services_names[container_id] then
+          services_names_count = services_names_count + 1
+        end
+        services_names[container_id] = name
+        if services_names_count > 1024 then
+          init()
+        end
+      end
+      function string.starts_with(str, start)
+        return string.sub(str, 1, string.len(start)) == start
+      end
+
+sinks:
+  prometheus_remote_write:
+    type: prometheus_remote_write
+    inputs: ['*_metrics']
+    healthcheck:
+      enabled: false
+    endpoint: '${PROMETHEUS_ENDPOINT}/api/prom/push'
+    auth:
+      strategy: basic
+      user: '$PROMETHEUS_USERNAME'
+      password: '$PROMETHEUS_PASSWORD'
+{% endraw %}

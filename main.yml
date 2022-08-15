@@ -5,6 +5,7 @@
     - tailscale
     - wireguard
     - heartbeat
+    - vector
     - restic
     - docker
     - services
