@@ -1,4 +1,5 @@
 tailscale_options:
+  accept_dns: no
   accept_routes: yes
   advertise_exit_node: yes
   advertise_routes:
