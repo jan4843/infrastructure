@@ -12,3 +12,9 @@
   register: result
   changed_when: "'Starting' in result.stdout"
   loop: '{{ services.stdout_lines }}'
+
+- name: Link Services crontab
+  file:
+    path: /etc/cron.d/services
+    src: '{{ services_root }}/crontab'
+    state: link
