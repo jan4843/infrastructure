@@ -1,7 +1,10 @@
 - name: Download Repository Signing Key
-  get_url:
-    url: https://pkgs.tailscale.com/stable/{{ ansible_distribution | lower }}/{{ ansible_distribution_release }}.noarmor.gpg
-    dest: /etc/apt/keyrings/tailscale.gpg
+  shell:
+    cmd: |
+      mkdir -p /etc/apt/keyrings
+      curl https://pkgs.tailscale.com/stable/{{ ansible_distribution | lower }}/{{ ansible_distribution_release }}.gpg |
+      gpg --dearmor --output /etc/apt/keyrings/tailscale.gpg
+    creates: /etc/apt/keyrings/tailscale.gpg
 
 - name: Add Repository
   apt_repository:
