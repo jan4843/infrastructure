@@ -7,7 +7,7 @@ restic_env:
   RCLONE_CONFIG: /dev/null
   RCLONE_FTP_HOST: '{{ rclone_ftps_host }}'
   RCLONE_FTP_PORT: 990
-  RCLONE_FTP_TLS: yes
+  RCLONE_FTP_TLS: true
   RCLONE_FTP_USER: '{{ rclone_ftps_username }}'
   RCLONE_FTP_PASS: '{{ rclone_ftps_password }}'
 restic_files:

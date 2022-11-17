@@ -1,6 +1,6 @@
 - name: Restart
   listen: restart_restic
-  systemd:
+  ansible.builtin.systemd:
     name: restic.timer
-    daemon_reload: yes
+    daemon_reload: true
     state: restarted

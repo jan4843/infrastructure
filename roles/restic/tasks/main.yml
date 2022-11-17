@@ -1,17 +1,17 @@
 - name: Install Packages
-  apt:
+  ansible.builtin.apt:
     name:
       - restic
       - rclone
 
 - name: Create Environment File
-  template:
+  ansible.builtin.template:
     src: env.j2
     dest: /etc/default/restic
     mode: go-r
 
 - name: Initialize Repository
-  script: init-repo.sh
+  ansible.builtin.script: init-repo.sh
   register: result
   failed_when:
     - result.rc != 0
@@ -20,21 +20,22 @@
     - result.rc == 0
 
 - name: Restore Backup
-  script: restore.sh {{ inventory_hostname | quote }}
+  ansible.builtin.script: restore.sh {{ inventory_hostname | quote }}
   register: result
   changed_when: "'already restored' not in result.stdout"
 
 - name: Create systemd Units
-  template:
+  ansible.builtin.template:
     src: restic.{{ item }}.j2
     dest: /etc/systemd/system/restic.{{ item }}
+    mode: ''
   notify: restart_restic
   loop:
     - service
     - timer
 
 - name: Enable systemd Timer
-  systemd:
+  ansible.builtin.systemd:
     name: restic.timer
-    enabled: yes
+    enabled: true
     state: started

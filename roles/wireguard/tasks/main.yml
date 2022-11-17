@@ -1,21 +1,22 @@
 - name: Install Package
-  apt:
+  ansible.builtin.apt:
     name: wireguard
 
 - name: Create Configuration
-  template:
+  ansible.builtin.template:
     src: wg0.conf.j2
     dest: /etc/wireguard/wg0.conf
+    mode: go-r
   notify: restart_wireguard
 
 - name: Enable systemd Service
-  systemd:
+  ansible.builtin.systemd:
     name: wg-quick@wg0.service
-    enabled: yes
+    enabled: true
     state: started
 
 - name: Enable IP Forwarding
-  sysctl:
+  ansible.posix.sysctl:
     name: '{{ item }}'
     value: '1'
   loop:

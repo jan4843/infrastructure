@@ -1,6 +1,6 @@
 tailscale_options:
-  accept_dns: no
-  accept_routes: yes
-  advertise_exit_node: yes
+  accept_dns: false
+  accept_routes: true
+  advertise_exit_node: true
   advertise_routes:
     - 10.0.0.128/25

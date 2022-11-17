@@ -1,12 +1,13 @@
 - name: Download Repository Signing Key
-  shell:
-    cmd: >
+  ansible.builtin.shell:
+    cmd: |
+      command mkdir -p /etc/apt/keyrings
       curl https://repositories.timber.io/public/vector/gpg.3543DB2D0A2BC4B8.key |
       gpg --dearmor --output /etc/apt/keyrings/vector.gpg
     creates: /etc/apt/keyrings/vector.gpg
 
 - name: Add Repository
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: >
       deb
       [signed-by=/etc/apt/keyrings/vector.gpg]
@@ -16,11 +17,11 @@
     filename: vector
 
 - name: Install Package
-  apt:
+  ansible.builtin.apt:
     name: vector
 
 - name: Create Environment File
-  template:
+  ansible.builtin.template:
     src: env.j2
     dest: /etc/default/vector
     owner: vector
@@ -29,12 +30,12 @@
   notify: restart_vector
 
 - name: Remove Default Configuration
-  file:
+  ansible.builtin.file:
     path: /etc/vector/vector.toml
     state: absent
 
 - name: Create Configuration
-  template:
+  ansible.builtin.template:
     src: '{{ item }}.yml.j2'
     dest: /etc/vector/{{ item }}.yml
     owner: vector
@@ -46,9 +47,9 @@
   notify: restart_vector
 
 - name: Add User to Required Groups
-  user:
+  ansible.builtin.user:
     name: vector
     groups:
       - docker
       - systemd-journal
-    append: yes
+    append: true

@@ -1,4 +1,4 @@
 - name: Install dotfiles
-  script: install-dotfiles.sh {{ dotfiles_repo | quote }}
+  ansible.builtin.script: install-dotfiles.sh {{ dotfiles_repo | quote }}
   register: result
   changed_when: "'already' not in result.stdout"

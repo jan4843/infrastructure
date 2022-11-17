@@ -1,6 +1,6 @@
 - name: Restart
   listen: restart_tailscale
-  systemd:
+  ansible.builtin.systemd:
     name: tailscaled.service
-    daemon_reload: yes
+    daemon_reload: true
     state: restarted

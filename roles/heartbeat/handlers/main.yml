@@ -1,6 +1,6 @@
 - name: Restart
   listen: restart_heartbeat
-  systemd:
+  ansible.builtin.systemd:
     name: heartbeat.service
-    daemon_reload: yes
+    daemon_reload: true
     state: restarted

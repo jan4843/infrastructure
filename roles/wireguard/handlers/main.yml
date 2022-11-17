@@ -1,6 +1,6 @@
 - name: Restart
   listen: restart_wireguard
-  systemd:
+  ansible.builtin.systemd:
     name: wg-quick@wg0.service
-    daemon_reload: yes
+    daemon_reload: true
     state: restarted

@@ -1,3 +1,6 @@
+ANSIBLE_VERSION ?= 6.6.*
+ANSIBLE_LINT_VERSION ?= 6.8.*
+
 ANSIBLE ?= docker run --rm --interactive --tty \
 	--volume "$(HOME)/.ssh:/root/.ssh:ro" \
 	--volume "$(CURDIR):/data:ro" \
@@ -19,18 +22,13 @@ _help:
 	echo; echo ROLES
 	printf '  %s\n' $(roles)
 
-$(addprefix HOST=,$(hosts)):
-
-$(roles): _noop HOST=$(HOST) _secrets _image
+$(roles): _noop HOST=$(HOST) _secrets _image _lint
 	echo '[{ hosts: [$(HOST)], roles: [$@] }]' > .git/playbook.yml
 	$(ANSIBLE)-playbook --inventory hosts .git/playbook.yml
 
 _noop:
 
-_image:
-	docker image inspect ansible > /dev/null 2>&1 || \
-	printf "FROM alpine\nRUN apk add --no-cache ansible openssh-client" | \
-	docker build --tag ansible -
+$(addprefix HOST=,$(hosts)):
 
 _secrets:
 	for secret in $$(grep -Eor '^(.+):.+secret_\1' *_vars | cut -d: -f1,2); do \
@@ -41,3 +39,11 @@ _secrets:
 		read -r value; \
 		echo "$$var: $$value" >> "$$file"; \
 	done
+
+_image:
+	docker image inspect ansible > /dev/null 2>&1 || \
+	printf "FROM python:3\nRUN pip install --no-cache-dir ansible==$(ANSIBLE_VERSION) ansible-lint==$(ANSIBLE_LINT_VERSION)" | \
+	docker build --tag ansible -
+
+_lint:
+	$(ANSIBLE)-lint -qq --strict

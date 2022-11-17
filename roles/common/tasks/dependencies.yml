@@ -1,5 +1,5 @@
 - name: Install Dependencies
-  apt:
+  ansible.builtin.apt:
     name:
       - ca-certificates
       - curl

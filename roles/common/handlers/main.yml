@@ -1,14 +1,14 @@
 - name: Restart SSH
   listen: restart_ssh
-  systemd:
+  ansible.builtin.systemd:
     name: ssh.service
     state: restarted
 
 - name: Restart Automounts
   listen: restart_automounts
-  systemd:
+  ansible.builtin.systemd:
     name: '{{ item.key }}.automount'
-    daemon_reload: yes
+    daemon_reload: true
     state: restarted
   loop: '{{ mounts | dict2items }}'
   loop_control:

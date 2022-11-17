@@ -1,13 +1,13 @@
 - name: Download Repository Signing Key
-  shell:
+  ansible.builtin.shell:
     cmd: |
-      mkdir -p /etc/apt/keyrings
+      command mkdir -p /etc/apt/keyrings
       curl https://pkgs.tailscale.com/stable/{{ ansible_distribution | lower }}/{{ ansible_distribution_release }}.gpg |
       gpg --dearmor --output /etc/apt/keyrings/tailscale.gpg
     creates: /etc/apt/keyrings/tailscale.gpg
 
 - name: Add Repository
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: >
       deb
       [signed-by=/etc/apt/keyrings/tailscale.gpg]
@@ -17,28 +17,30 @@
     filename: tailscale
 
 - name: Install Package
-  apt:
+  ansible.builtin.apt:
     name: tailscale
 
 - name: Create Environment File
-  template:
+  ansible.builtin.template:
     src: env.j2
     dest: /etc/default/tailscale
     mode: go-r
   notify: restart_tailscale
 
 - name: Create systemd Drop-In Directory
-  file:
+  ansible.builtin.file:
     path: /etc/systemd/system/tailscaled.service.d
     state: directory
+    mode: ''
 
 - name: Copy systemd Drop-In
-  copy:
+  ansible.builtin.copy:
     src: up.conf
     dest: /etc/systemd/system/tailscaled.service.d/up.conf
+    mode: ''
 
 - name: Enable IP Forwarding
-  sysctl:
+  ansible.posix.sysctl:
     name: '{{ item }}'
     value: '1'
   loop:

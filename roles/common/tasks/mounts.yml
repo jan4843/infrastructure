@@ -1,24 +1,26 @@
 - name: Create systemd Mount
-  template:
+  ansible.builtin.template:
     src: item.mount
     dest: /etc/systemd/system/{{ item.key }}.mount
+    mode: ''
   loop: '{{ mounts | dict2items }}'
   loop_control:
     label: '{{ item.key }}'
 
 - name: Create systemd Automount
-  template:
+  ansible.builtin.template:
     src: item.automount
     dest: /etc/systemd/system/{{ item.key }}.automount
+    mode: ''
   loop: '{{ mounts | dict2items }}'
   loop_control:
     label: '{{ item.key }}'
   notify: restart_automounts
 
 - name: Enable systemd Automount
-  systemd:
+  ansible.builtin.systemd:
     name: '{{ item.key }}.automount'
-    enabled: yes
+    enabled: true
     state: started
   loop: '{{ mounts | dict2items }}'
   loop_control:

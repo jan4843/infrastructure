@@ -1,10 +1,10 @@
 - name: Uninstall snap
-  apt:
+  ansible.builtin.apt:
     name: snapd
-    purge: yes
+    purge: true
     state: absent
 
 - name: Remove snap Directory
-  file:
+  ansible.builtin.file:
     path: '{{ ansible_user_dir }}/snap'
     state: absent

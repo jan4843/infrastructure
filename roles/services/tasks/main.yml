@@ -1,5 +1,5 @@
 - name: Gather Services
-  script: gather-services.sh {{ services_root | quote }}
+  ansible.builtin.script: gather-services.sh {{ services_root | quote }}
   register: services
   changed_when:
     - services.rc == 100
@@ -8,13 +8,13 @@
     - services.rc != 100
 
 - name: Start Service
-  script: start-service.sh {{ services_root | quote }}/{{ item | quote }}
+  ansible.builtin.script: start-service.sh {{ services_root | quote }}/{{ item | quote }}
   register: result
   changed_when: "'Starting' in result.stdout"
   loop: '{{ services.stdout_lines }}'
 
 - name: Link Services crontab
-  file:
+  ansible.builtin.file:
     path: /etc/cron.d/services
     src: '{{ services_root }}/crontab'
     state: link

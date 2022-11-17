@@ -1,5 +1,14 @@
-- import_tasks: dependencies.yml
-- import_tasks: hostname.yml
-- import_tasks: mounts.yml
-- import_tasks: ssh.yml
-- import_tasks: timezone.yml
+- name: Dependencies
+  ansible.builtin.import_tasks: dependencies.yml
+
+- name: Hostname
+  ansible.builtin.import_tasks: hostname.yml
+
+- name: Mounts
+  ansible.builtin.import_tasks: mounts.yml
+
+- name: SSH
+  ansible.builtin.import_tasks: ssh.yml
+
+- name: Timezone
+  ansible.builtin.import_tasks: timezone.yml
