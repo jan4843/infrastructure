@@ -44,8 +44,11 @@
     group: vector
     mode: go-r
   loop:
-    - logs
-    - metrics
+    - logs_docker
+    - logs_journald
+    - metrics_host
+    - metrics_sensors
+    - sinks
   notify: restart_vector
 
 - name: Add User to Required Groups

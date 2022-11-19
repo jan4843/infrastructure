@@ -1,0 +1,31 @@
+{% raw -%}
+sources:
+  journald_logs_raw:
+    type: journald
+    current_boot_only: false
+
+transforms:
+  journald_logs:
+    type: remap
+    inputs: [journald_logs_raw]
+    source: |
+      level = "unknown"
+      if .PRIORITY == "0" || .PRIORITY == "1" || .PRIORITY == "2" {
+        level = "critical"
+      } else if .PRIORITY == "3" {
+        level = "error"
+      } else if .PRIORITY == "4" {
+        level = "warning"
+      } else if .PRIORITY == "5" || .PRIORITY == "6" {
+        level = "info"
+      } else if .PRIORITY == "7" {
+        level = "debug"
+      }
+      . = {
+        "host": .host,
+        "source": .source_type,
+        "level": level,
+        "service": ._SYSTEMD_UNIT || .SYSLOG_IDENTIFIER,
+        "message": .message
+      }
+{% endraw %}
