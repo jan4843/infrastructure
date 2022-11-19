@@ -24,6 +24,20 @@ sources:
           - br-*
           - veth*
 
+  sensors_exec_raw:
+    type: exec
+    mode: scheduled
+    command:
+      - sensors
+      - --config=/dev/null
+      - --no-adapter
+      - -j
+    include_stderr: false
+    scheduled:
+      exec_interval_secs: 15
+    framing:
+      method: bytes
+
 transforms:
   host_metrics:
     type: lua
@@ -93,6 +107,47 @@ transforms:
       function string.starts_with(str, start)
         return string.sub(str, 1, string.len(start)) == start
       end
+
+  sensor_exec:
+    type: remap
+    inputs: [sensors_exec_raw]
+    source: |-
+      result = []
+      for_each(object!(parse_json!(string!(.message)))) -> |device, sensors| {
+        for_each(object!(sensors)) -> |sensor, metrics| {
+          for_each(object!(metrics)) -> |metric, value| {
+            result = append(result, [{
+              "kind": "absolute",
+              "name": "sensors_" + replace(metric, r'[0-9]', ""),
+              "namespace": "host",
+              "value": value,
+              "tags": {
+                "collector": "sensors",
+                "host": .host,
+                "device": device,
+                "sensor": sensor,
+              },
+              "timestamp": .timestamp,
+            }])
+          }
+        }
+      }
+      . = result
+
+  sensor_metrics:
+    type: log_to_metric
+    inputs: [sensor_exec]
+    metrics:
+    - field: value
+      name: '{{name}}'
+      namespace: '{{namespace}}'
+      tags:
+        collector: '{{tags.collector}}'
+        host: '{{tags.host}}'
+        device: '{{tags.device}}'
+        sensor: '{{tags.sensor}}'
+      type: gauge
+      kind: absolute
 
 sinks:
   prometheus_remote_write:

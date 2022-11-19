@@ -16,9 +16,11 @@
       main
     filename: vector
 
-- name: Install Package
+- name: Install Packages
   ansible.builtin.apt:
-    name: vector
+    name:
+      - vector
+      - lm-sensors
 
 - name: Create Environment File
   ansible.builtin.template:
