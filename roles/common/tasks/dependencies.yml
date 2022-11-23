@@ -1,8 +1,0 @@
-- name: Install Dependencies
-  ansible.builtin.apt:
-    name:
-      - ca-certificates
-      - curl
-      - git
-      - gnupg
-      - make

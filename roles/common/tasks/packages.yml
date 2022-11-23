@@ -1,0 +1,21 @@
+- name: Install Dependencies
+  ansible.builtin.apt:
+    name:
+      - ca-certificates
+      - curl
+      - git
+      - gnupg
+      - make
+
+- name: Install Utilities
+  ansible.builtin.apt:
+    name:
+      - bash-completion
+      - file
+      - htop
+      - jq
+      - tmux
+      - tree
+      - unar
+      - vim
+      - wget
