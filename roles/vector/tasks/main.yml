@@ -47,6 +47,7 @@
     - logs_docker
     - logs_journald
     - metrics_host
+    - metrics_reboot_required
     - metrics_sensors
     - sinks
   notify: restart_vector
