@@ -16,7 +16,7 @@ transforms:
     type: remap
     inputs: [reboot_required_exec_raw]
     source: |
-      .value = to_int!(string!(.message))
+      .value = to_int!(.message)
 
   reboot_required_metrics:
     type: log_to_metric

@@ -9,7 +9,10 @@ transforms:
     inputs: [docker_logs_raw]
     condition: >
       .stream != "console" &&
-      starts_with!(.label."com.docker.compose.project.working_dir", replace(get_env_var!("SERVICES_ROOT"), r'/$', "") + "/")
+      starts_with!(
+        .label."com.docker.compose.project.working_dir",
+        replace(get_env_var!("SERVICES_ROOT"), r'/$', "") + "/"
+      )
 
   docker_logs:
     type: remap
@@ -17,7 +20,7 @@ transforms:
     source: |
       . = {
         "host": .host,
-        "source": .source_type,
+        "source": "docker",
         "level": "unknown",
         "service": .label."com.docker.compose.service",
         "message": .message

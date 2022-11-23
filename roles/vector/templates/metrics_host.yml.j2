@@ -6,6 +6,11 @@ sources:
       groups:
         include:
           - '*docker*'
+    network:
+      devices:
+        excludes:
+          - br-*
+          - veth*
     disk:
       devices:
         excludes:
@@ -17,12 +22,7 @@ sources:
 {% endraw %}
       mountpoints:
         excludes: {{ mounts | default({}) | dict2items | selectattr('value.timeout_idle', 'defined') | map(attribute='value.mount_point') | tojson }}
-{% raw %}
-    network:
-      devices:
-        excludes:
-          - br-*
-          - veth*
+{% raw -%}
 
 transforms:
   host_metrics:
@@ -32,7 +32,7 @@ transforms:
     hooks:
       init: init
       process: process
-    source: |-
+    source: |
       function init(emit)
         services_names = {}
         services_names_count = 0

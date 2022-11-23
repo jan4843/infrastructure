@@ -18,24 +18,18 @@ transforms:
   sensor_exec:
     type: remap
     inputs: [sensors_exec_raw]
-    source: |-
+    source: |
       result = []
-      for_each(object!(parse_json!(string!(.message)))) -> |device, sensors| {
+      output = parse_json!(string!(del(.message)))
+      for_each(object!(output)) -> |chip, sensors| {
         for_each(object!(sensors)) -> |sensor, metrics| {
           for_each(object!(metrics)) -> |metric, value| {
-            result = append(result, [{
-              "kind": "absolute",
+            result = push(result, merge(., {
               "name": "sensors_" + replace(metric, r'[0-9]', ""),
-              "namespace": "host",
               "value": value,
-              "tags": {
-                "collector": "sensors",
-                "host": .host,
-                "device": device,
-                "sensor": sensor,
-              },
-              "timestamp": .timestamp,
-            }])
+              "chip": chip,
+              "sensor": sensor,
+            }))
           }
         }
       }
@@ -45,14 +39,13 @@ transforms:
     type: log_to_metric
     inputs: [sensor_exec]
     metrics:
-    - field: value
-      name: '{{name}}'
-      namespace: '{{namespace}}'
-      tags:
-        collector: '{{tags.collector}}'
-        host: '{{tags.host}}'
-        device: '{{tags.device}}'
-        sensor: '{{tags.sensor}}'
-      type: gauge
-      kind: absolute
+      - namespace: host
+        name: '{{ name }}'
+        field: value
+        tags:
+          collector: sensors
+          host: '{{ host }}'
+          chip: '{{ chip }}'
+          sensor: '{{ sensor }}'
+        type: gauge
 {% endraw %}
