@@ -57,6 +57,13 @@ dashboard = Dashboard(
                 ),
             ],
             gridPos=GridPos(h=4, w=4, x=8, y=0),
+            links=[
+                ExternalLink(
+                    title='Loki',
+                    uri='/explore?left=%7B%22datasource%22%3A%22grafanacloud-logs%22%2C%22queries%22%3A%5B%7B%22expr%22%3A%22%7Bhost%3D%5C%22${host}%5C%22%7D%22%7D%5D%2C%22range%22%3A%7B%22from%22%3A%22${__from}%22%2C%22to%22%3A%22${__to}%22%7D%7D',
+                    keepTime=True,
+                ),
+            ],
         ),
         Stat(
             title='Containers',
