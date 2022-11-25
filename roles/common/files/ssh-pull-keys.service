@@ -1,0 +1,4 @@
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/default/%N
+ExecStart=ssh-pull-keys

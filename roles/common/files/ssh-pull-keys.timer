@@ -1,0 +1,6 @@
+[Timer]
+Unit=%N.service
+OnCalendar=*:0
+
+[Install]
+WantedBy=timers.target

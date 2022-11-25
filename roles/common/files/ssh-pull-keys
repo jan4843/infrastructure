@@ -1,0 +1,35 @@
+#!/bin/sh -e
+
+: "${SSH_KEYS_URL:?}"
+USER=${USER:-$(whoami)}
+AUTHORIZED_KEYS_FILE=$(eval echo ~"$USER"/.ssh/authorized_keys)
+
+local_keys() {
+	cat "$AUTHORIZED_KEYS_FILE"
+}
+
+remote_keys() {
+	curl --silent --retry 3 --max-time 5 "$SSH_KEYS_URL" |
+	while read -r KEY; do
+		echo "$KEY" |
+		ssh-keygen -ef /dev/stdin |
+		ssh-keygen -if /dev/stdin
+	done
+}
+
+combined_keys() {
+	{ local_keys; remote_keys; } |
+	sort -u
+}
+
+local_keys_count() {
+	local_keys | wc -l
+}
+
+count_before=$(local_keys_count)
+
+output=$(combined_keys)
+printf '%s\n' "$output" > "$AUTHORIZED_KEYS_FILE"
+
+count_after=$(local_keys_count)
+echo "Added $(( count_after - count_before )) keys"

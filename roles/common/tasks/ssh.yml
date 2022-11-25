@@ -1,7 +1,7 @@
 - name: Add SSH Authorized Keys
   ansible.posix.authorized_key:
     user: '{{ ansible_user_id }}'
-    key: '{{ ssh_keys }}'
+    key: '{{ ssh_keys_url }}'
 
 - name: Enable Public Key-Only SSH Login
   ansible.builtin.blockinfile:
@@ -11,3 +11,31 @@
       ChallengeResponseAuthentication no
       PasswordAuthentication no
   notify: restart_ssh
+
+- name: Create ssh-pull-keys Executable
+  ansible.builtin.copy:
+    src: ssh-pull-keys
+    dest: /usr/local/bin
+    mode: +x
+
+- name: Create ssh-pull-keys Environment File
+  ansible.builtin.copy:
+    content: |
+      SSH_KEYS_URL={{ ssh_keys_url | quote }}
+    dest: /etc/default/ssh-pull-keys
+    mode: ''
+
+- name: Create ssh-pull-keys systemd Units
+  ansible.builtin.copy:
+    src: ssh-pull-keys.{{ item }}
+    dest: /etc/systemd/system/ssh-pull-keys.{{ item }}
+    mode: ''
+  loop:
+    - service
+    - timer
+
+- name: Enable ssh-pull-keys systemd Timer
+  ansible.builtin.systemd:
+    name: ssh-pull-keys.timer
+    enabled: true
+    state: started
