@@ -1,3 +1,9 @@
+- name: Restart Docker
+  listen: restart_docker
+  ansible.builtin.systemd:
+    name: docker.service
+    state: restarted
+
 - name: Restart containerd
   listen: restart_containerd
   ansible.builtin.systemd:

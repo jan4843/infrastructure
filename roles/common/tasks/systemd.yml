@@ -1,0 +1,7 @@
+- name: Set Max journald Storage
+  ansible.builtin.blockinfile:
+    path: /etc/systemd/journald.conf
+    block: |
+      [Journal]
+      SystemMaxUse=128M
+  notify: restart_journald

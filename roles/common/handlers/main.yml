@@ -1,9 +1,3 @@
-- name: Restart SSH
-  listen: restart_ssh
-  ansible.builtin.systemd:
-    name: ssh.service
-    state: restarted
-
 - name: Restart Automounts
   listen: restart_automounts
   ansible.builtin.systemd:
@@ -13,3 +7,15 @@
   loop: '{{ mounts | dict2items }}'
   loop_control:
     label: '{{ item.key }}'
+
+- name: Restart SSH
+  listen: restart_ssh
+  ansible.builtin.systemd:
+    name: ssh.service
+    state: restarted
+
+- name: Restart journald
+  listen: restart_journald
+  ansible.builtin.systemd:
+    name: systemd-journald.service
+    state: restarted

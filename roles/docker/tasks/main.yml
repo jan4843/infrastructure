@@ -22,6 +22,19 @@
       - docker-ce
       - docker-compose-plugin
 
+- name: Configure Docker Daemon
+  ansible.builtin.copy:
+    content: '{{ docker_config | to_nice_json }}'
+    dest: /etc/docker/daemon.json
+    mode: ''
+  vars:
+    docker_config:
+      log-driver: local
+      log-opts:
+        max-size: 2m
+        max-file: '4'
+  notify: restart_docker
+
 - name: Configure Plugins Directory
   ansible.builtin.blockinfile:
     path: /etc/containerd/config.toml
