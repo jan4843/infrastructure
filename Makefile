@@ -1,3 +1,4 @@
+export LC_ALL := C.UTF-8
 export PATH := venv/bin:$(PATH)
 
 ROLES = $(notdir $(wildcard roles/*))
