@@ -130,6 +130,12 @@ dashboard = Dashboard(
                     legendFormat='used',
                 ),
             ],
+            overrides=[{
+                'matcher': {'id': 'byName', 'options': 'total'},
+                'properties': [
+                    {'id': 'custom.fillOpacity', 'value': '0'},
+                ],
+            }],
             gridPos=GridPos(h=8, w=12, x=12, y=4),
         ),
         TimeSeries(
