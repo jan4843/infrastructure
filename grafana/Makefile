@@ -1,17 +1,14 @@
-sources := $(wildcard *.dashboard.py)
-
-export PATH := venv/bin:$(PATH)
+export PATH := ../venv/bin:$(PATH)
 export PYTHONDONTWRITEBYTECODE := 1
 
+SOURCES = $(wildcard *.dashboard.py)
+
 .PHONY: all
-all: $(sources:.dashboard.py=.json)
+all: $(SOURCES:.dashboard.py=.json)
 
-%.json: %.dashboard.py | venv
-	generate-dashboard --output $@ $<
-
-venv:
-	python3 -m venv venv
-	pip install -qq -r requirements.txt
+%.json: %.dashboard.py
+	@cd .. && $(MAKE) _venv
+	generate-dashboard --output $@ $<;
 
 .PHONY: clean
 clean:

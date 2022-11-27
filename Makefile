@@ -1,34 +1,25 @@
-ANSIBLE_VERSION ?= 6.6.*
-ANSIBLE_LINT_VERSION ?= 6.8.*
+export PATH := venv/bin:$(PATH)
 
-ANSIBLE ?= docker run --rm --interactive --tty \
-	--volume "$(HOME)/.ssh:/root/.ssh:ro" \
-	--volume "$(CURDIR):/data:ro" \
-	--volume "$(CURDIR)/roles:/etc/ansible/roles:ro" \
-	--workdir "/data" \
-	ansible \
-	ansible
-
-roles = $(notdir $(wildcard roles/*))
-hosts = $(shell grep -Eoi '^[a-z]\S+' hosts | sort -u)
+ROLES = $(notdir $(wildcard roles/*))
+HOSTS = $(shell grep -Eoi '^[a-z]\S+' hosts | sort -u)
 
 .SILENT:
 
 _help:
 	echo USAGE
 	printf '  %s\n' 'make HOST=HOST ROLE...'
-	echo; echo HOSTS
-	printf '  %s\n' $(hosts)
-	echo; echo ROLES
-	printf '  %s\n' $(roles)
+	echo
+	echo HOSTS
+	printf '  %s\n' $(HOSTS)
+	echo
+	echo ROLES
+	printf '  %s\n' $(ROLES)
 
-$(roles): _noop HOST=$(HOST) _secrets _image _lint
-	echo '[{ hosts: [$(HOST)], roles: [$@] }]' > .git/playbook.yml
-	$(ANSIBLE)-playbook --inventory hosts .git/playbook.yml
+$(ROLES): | HOST=$(HOST) _secrets _venv _lint
+	echo '[{ hosts: [$(HOST)], roles: [$@] }]' | \
+	ansible-playbook /dev/stdin
 
-_noop:
-
-$(addprefix HOST=,$(hosts)):
+$(addprefix HOST=,$(HOSTS)):
 
 _secrets:
 	for secret in $$(grep -Eor '^(.+):.+secret_\1' *_vars | cut -d: -f1,2); do \
@@ -40,10 +31,10 @@ _secrets:
 		echo "$$var: $$value" >> "$$file"; \
 	done
 
-_image:
-	docker image inspect ansible > /dev/null 2>&1 || \
-	printf "FROM python:3\nRUN pip install --no-cache-dir ansible==$(ANSIBLE_VERSION) ansible-lint==$(ANSIBLE_LINT_VERSION)" | \
-	docker build --tag ansible -
+_venv:
+	test -d venv && exit 0; \
+	python3 -m venv venv; \
+	pip install --requirement requirements.txt
 
 _lint:
-	$(ANSIBLE)-lint -qq --strict
+	ansible-lint -qq --strict;
