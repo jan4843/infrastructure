@@ -1,26 +1,25 @@
-export LC_ALL := C.UTF-8
-export PATH := venv/bin:$(PATH)
+HOSTS := $(shell grep -Eoi '^[a-z]\S+' hosts | sort -u)
 
-ROLES = $(notdir $(wildcard roles/*))
-HOSTS = $(shell grep -Eoi '^[a-z]\S+' hosts | sort -u)
+ANSIBLE ?= docker container run \
+	--rm \
+	--interactive \
+	--tty \
+	--volume $(CURDIR):/data \
+	--workdir /data \
+	--volume $(HOME)/.ssh:/root/.ssh \
+	--volume $(realpath $(HOME)/.ssh/config):/root/.ssh/config \
+	--volume /run/host-services/ssh-auth.sock:/run/host-services/ssh-auth.sock \
+	--env SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock \
+	ansible ansible
 
 .SILENT:
 
 _help:
-	echo USAGE
-	printf '  %s\n' 'make HOST=HOST ROLE...'
-	echo
-	echo HOSTS
-	printf '  %s\n' $(HOSTS)
-	echo
-	echo ROLES
-	printf '  %s\n' $(ROLES)
+	echo usage:
+	printf '  make %s\n' $(HOSTS)
 
-$(ROLES): | HOST=$(HOST) _secrets _venv _lint
-	echo '[{ hosts: [$(HOST)], roles: [$@] }]' | \
-	ansible-playbook /dev/stdin
-
-$(addprefix HOST=,$(HOSTS)):
+$(HOSTS): _secrets _image _lint
+	$(ANSIBLE)-playbook --limit $@ main.yml
 
 _secrets:
 	for secret in $$(grep -Eor '^(.+):.+secret_\1' *_vars | cut -d: -f1,2); do \
@@ -32,10 +31,9 @@ _secrets:
 		echo "$$var: $$value" >> "$$file"; \
 	done
 
-_venv:
-	test -d venv && exit 0; \
-	python3 -m venv venv; \
-	pip install --requirement requirements.txt
+_image:
+	docker image inspect ansible > /dev/null 2>&1 || \
+	docker image build --tag ansible .
 
 _lint:
-	ansible-lint -qq --strict;
+	$(ANSIBLE)-lint -qq --strict

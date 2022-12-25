@@ -1,3 +1,4 @@
-ansible==7.0.*
-ansible-lint==6.9.*
-grafanalib==0.7.*
+ansible-core==2.12.*
+ansible-lint==6.10.*
+ansible==5.10.*
+mitogen==0.3.*
