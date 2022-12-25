@@ -15,3 +15,6 @@
 
 - name: Import Timezone Tasks
   ansible.builtin.import_tasks: timezone.yml
+
+- name: Import Ubuntu Tasks
+  ansible.builtin.import_tasks: ubuntu.yml

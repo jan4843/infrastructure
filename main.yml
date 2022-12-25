@@ -1,7 +1,6 @@
 - hosts: all
   roles:
     - common
-    - ubuntu
     - dotfiles
     - tailscale
     - wireguard
