@@ -1,15 +1,13 @@
-rclone_ftps_host: '{{ secret_rclone_ftps_host }}'
-rclone_ftps_username: '{{ secret_rclone_ftps_username }}'
-rclone_ftps_password: '{{ secret_rclone_ftps_password }}'
+rclone_webdav_url: '{{ secret_rclone_webdav_url }}'
+rclone_webdav_username: '{{ secret_rclone_webdav_username }}'
+rclone_webdav_password: '{{ secret_rclone_webdav_password }}'
 
-restic_repository: rclone::ftp:/Backups/{{ inventory_hostname }}
+restic_repository: rclone::webdav:/Backups/{{ inventory_hostname }}
 restic_env:
   RCLONE_CONFIG: /dev/null
-  RCLONE_FTP_HOST: '{{ rclone_ftps_host }}'
-  RCLONE_FTP_PORT: 990
-  RCLONE_FTP_TLS: true
-  RCLONE_FTP_USER: '{{ rclone_ftps_username }}'
-  RCLONE_FTP_PASS: '{{ rclone_ftps_password }}'
+  RCLONE_WEBDAV_URL: '{{ rclone_webdav_url }}'
+  RCLONE_WEBDAV_USER: '{{ rclone_webdav_username }}'
+  RCLONE_WEBDAV_PASS: '{{ rclone_webdav_password }}'
 restic_files:
   - '{{ services_root }}'
 restic_backup_options:
