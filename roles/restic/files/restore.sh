@@ -8,8 +8,10 @@ if [ -e "$lock_file" ]; then
 fi
 
 . /etc/default/restic
-if ! output=$(restic restore latest --target=/ --verify); then
-	exit 1
+if ! output=$(restic restore latest --target=/ --verify 2>&1); then
+	if ! printf '%s\n' "$output" | grep -q 'no snapshot found'; then
+		exit 1
+	fi
 fi
 if printf '%s\n' "$output" | grep -Eq 'There were [0-9]+ errors'; then
 	exit 1

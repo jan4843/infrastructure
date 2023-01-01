@@ -13,6 +13,13 @@
   changed_when: "'Starting' in result.stdout"
   loop: '{{ services.stdout_lines }}'
 
+- name: Create Services crontab
+  ansible.builtin.copy:
+    dest: '{{ services_root }}/crontab'
+    content: ''
+    force: false
+    mode: ''
+
 - name: Link Services crontab
   ansible.builtin.file:
     path: /etc/cron.d/services

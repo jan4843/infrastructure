@@ -1,6 +1,7 @@
 #!/bin/sh -e
 
 for service in "$1"/*/; do
+	test -d "$service" || continue
 	cd "$service"
 	service=$(basename "$PWD")
 	config=$(docker compose config 2> /dev/null) || continue
