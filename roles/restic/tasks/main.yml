@@ -39,3 +39,6 @@
     name: restic.timer
     enabled: true
     state: started
+
+- name: Flush Handlers
+  ansible.builtin.meta: flush_handlers

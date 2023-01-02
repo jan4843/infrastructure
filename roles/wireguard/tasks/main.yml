@@ -22,3 +22,6 @@
   loop:
     - net.ipv4.ip_forward
     - net.ipv6.conf.all.forwarding
+
+- name: Flush Handlers
+  ansible.builtin.meta: flush_handlers
