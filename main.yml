@@ -15,10 +15,17 @@
   roles:
     - common
     - dotfiles
-    - tailscale
-    - wireguard
     - heartbeat
     - docker
     - vector
     - restic
     - services
+
+- hosts: home
+  roles:
+    - tailscale
+    - wireguard
+
+- hosts: aux
+  roles:
+    - tailscale
