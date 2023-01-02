@@ -1,7 +1,8 @@
 - name: Create Environment File
-  ansible.builtin.template:
-    src: env.j2
-    dest: /etc/default/heartbeat
+  ansible.builtin.copy:
+    content: |
+      HEALTHCHECKS_PING_KEY={{ healthchecks_ping_key | quote }}
+    dest: /etc/default/healthchecks
     mode: go-r
 
 - name: Create systemd Service

@@ -1,0 +1,1 @@
+healthchecks_ping_key: '{{ secret_healthchecks_ping_key }}'

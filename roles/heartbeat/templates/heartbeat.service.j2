@@ -1,6 +1,6 @@
 [Service]
-EnvironmentFile=/etc/default/%N
-ExecStart=sh -c 'while echo "$(curl -s https://hc-ping.com/${HEALTHCHECKS_UUID})"; do sleep 60; done'
+EnvironmentFile=/etc/default/healthchecks
+ExecStart=sh -c 'while echo "$(curl -s https://hc-ping.com/${HEALTHCHECKS_PING_KEY}/%H)"; do sleep 60; done'
 
 [Install]
 WantedBy=multi-user.target
