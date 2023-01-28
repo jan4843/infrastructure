@@ -1,11 +1,12 @@
 FROM python:3-slim
 RUN apt-get update && \
-    apt-get install --assume-yes --no-install-recommends \
-        git \
-        openssh-client \
+    apt-get install --yes --no-install-recommends \
+        git='*' \
+        make='*' \
+        openssh-client='*' \
     && \
     rm -rf /var/lib/apt/lists/*
+WORKDIR /app
 COPY requirements.txt ./
 RUN pip install --no-cache-dir --requirement requirements.txt && \
-    cd /usr/local/lib && \
-    ln -s python3.* python3
+    ln -s /usr/local/lib/python3.* /usr/local/lib/python3
