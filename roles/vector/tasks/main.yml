@@ -44,7 +44,6 @@
     group: vector
     mode: go-r
   loop:
-    - logs_docker
     - logs_journald
     - metrics_host
     - metrics_reboot_required

@@ -29,10 +29,9 @@
     mode: ''
   vars:
     docker_config:
-      log-driver: local
+      log-driver: journald
       log-opts:
-        max-size: 2m
-        max-file: '4'
+        labels-regex: '.*'
   notify: restart_docker
 
 - name: Configure Plugins Directory
