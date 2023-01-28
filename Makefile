@@ -1,25 +1,39 @@
-HOSTS := $(shell grep -Eoi '^[a-z]\S+' hosts | sort -u)
-
-ANSIBLE ?= docker container run \
-	--rm \
-	--interactive \
-	--tty \
-	--volume $(CURDIR):/data \
+CONTAINER = docker container run \
+	--rm --interactive --tty \
+	--volume $(CURDIR):/data:ro \
 	--workdir /data \
-	--volume $(HOME)/.ssh:/root/.ssh \
-	--volume $(realpath $(HOME)/.ssh/config):/root/.ssh/config \
-	--volume /run/host-services/ssh-auth.sock:/run/host-services/ssh-auth.sock \
+	--volume $(HOME)/.ssh:/root/.ssh:ro \
+	--volume $(realpath $(HOME)/.ssh/config):/root/.ssh/config:ro \
+	--volume /run/host-services/ssh-auth.sock:/run/host-services/ssh-auth.sock:ro \
 	--env SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock \
-	ansible ansible
+	ansible
+
+ifndef host
+host = $(error Missing value for variable `host')
+endif
 
 .SILENT:
 
-_help:
-	echo usage:
-	printf '  make %s\n' $(HOSTS)
+run: _secrets _image _lint
+	$(CONTAINER) ansible-playbook main.yml \
+		--limit $(host)
 
-$(HOSTS): _secrets _image _lint
-	$(ANSIBLE)-playbook --limit $@ main.yml
+debug: _image
+	$(CONTAINER) ansible $(host) \
+		--module-name ansible.builtin.setup
+	$(CONTAINER) ansible $(host) \
+		--module-name ansible.builtin.debug \
+		--args var=hostvars[inventory_hostname]
+
+shell: _image
+	$(CONTAINER) bash
+
+clean:
+	! docker image inspect ansible >/dev/null 2>&1 || \
+	docker image rm ansible
+
+_lint: _image
+	$(CONTAINER) ansible-lint -qq --strict --offline
 
 _secrets:
 	for secret in $$(grep -Eor '^(.+):.+secret_\1' *_vars | cut -d: -f1,2); do \
@@ -32,8 +46,5 @@ _secrets:
 	done
 
 _image:
-	docker image inspect ansible > /dev/null 2>&1 || \
+	docker image inspect ansible >/dev/null 2>&1 || \
 	docker image build --tag ansible .
-
-_lint:
-	$(ANSIBLE)-lint -qq --strict
