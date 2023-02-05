@@ -1,0 +1,8 @@
+- name: Install Python
+  ansible.builtin.raw: |
+    command -v python3 >/dev/null && exit
+
+    apt-get update &&
+    apt-get install --yes python3-minimal
+  register: result
+  changed_when: result.stdout != ''

@@ -58,6 +58,3 @@
       - docker
       - systemd-journal
     append: true
-
-- name: Flush Handlers
-  ansible.builtin.meta: flush_handlers

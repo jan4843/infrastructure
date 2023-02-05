@@ -18,6 +18,3 @@
 
 - name: Import Ubuntu Tasks
   ansible.builtin.import_tasks: ubuntu.yml
-
-- name: Flush Handlers
-  ansible.builtin.meta: flush_handlers

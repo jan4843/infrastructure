@@ -48,6 +48,3 @@
   ansible.builtin.file:
     path: /opt/containerd
     state: absent
-
-- name: Flush Handlers
-  ansible.builtin.meta: flush_handlers

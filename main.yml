@@ -1,31 +1,44 @@
 - name: Bootstrap
-  hosts: all
+  roles: [bootstrap]
+  hosts: [all]
   strategy: linear
-  gather_facts: false
-  tasks:
-    - name: Install Python
-      raw: |
-        command -v python3 >/dev/null && exit
-        apt-get update
-        apt-get install -y python3-minimal
-      register: result
-      changed_when: result.stdout != ''
 
-- hosts: all
-  roles:
-    - common
-    - dotfiles
-    - heartbeat
-    - docker
-    - vector
-    - restic
-    - services
+- name: Gather Facts
+  gather_facts: true
+  hosts: [all]
 
-- hosts: home
-  roles:
-    - tailscale
-    - wireguard
+- name: Apply common role
+  roles: [common]
+  hosts: [all]
 
-- hosts: aux
-  roles:
-    - tailscale
+- name: Apply dotfiles role
+  roles: [dotfiles]
+  hosts: [all]
+
+- name: Apply heartbeat role
+  roles: [heartbeat]
+  hosts: [all]
+
+- name: Apply docker role
+  roles: [docker]
+  hosts: [all]
+
+- name: Apply vector role
+  roles: [vector]
+  hosts: [all]
+
+- name: Apply restic role
+  roles: [restic]
+  hosts: [all]
+
+- name: Apply services role
+  roles: [services]
+  hosts: [all]
+
+- name: Apply tailscale role
+  roles: [tailscale]
+  hosts: [aux, home]
+
+- name: Apply wireguard role
+  roles: [wireguard]
+  hosts: [home]
