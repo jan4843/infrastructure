@@ -1,0 +1,15 @@
+- name: Set Distribution apt Sources
+  ansible.builtin.copy:
+    content: |
+      deb http://deb.debian.org/debian {{ distribution }} {{ components | join(' ') }}
+      deb http://deb.debian.org/debian-security {{ distribution }}-security {{ components | join(' ') }}
+      deb http://deb.debian.org/debian {{ distribution }}-updates {{ components | join(' ') }}
+    dest: /etc/apt/sources.list
+    mode: ''
+  vars:
+    distribution: '{{ ansible_distribution_release }}'
+    components:
+      - main
+      - contrib
+      - non-free
+  notify: update_apt

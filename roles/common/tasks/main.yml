@@ -16,5 +16,10 @@
 - name: Import Timezone Tasks
   ansible.builtin.import_tasks: timezone.yml
 
+- name: Import Debian Tasks
+  ansible.builtin.import_tasks: debian.yml
+  when: ansible_distribution == 'Debian'
+
 - name: Import Ubuntu Tasks
   ansible.builtin.import_tasks: ubuntu.yml
+  when: ansible_distribution == 'Ubuntu'
