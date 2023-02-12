@@ -1,0 +1,8 @@
+[Service]
+Type=oneshot
+ExecStart=zpool scrub -w %I
+
+Environment=HEALTHCHECKS_SLUG=%H-%p%I
+EnvironmentFile=/etc/default/healthchecks
+ExecStartPre=-curl --output /dev/null --silent --retry 3 https://hc-ping.com/${HEALTHCHECKS_PING_KEY}/${HEALTHCHECKS_SLUG}/start
+ExecStopPost=-sh -c 'curl --output /dev/null --silent --retry 3 --data "$(journalctl --output=cat _SYSTEMD_INVOCATION_ID="$(systemctl show -P InvocationID %n)")" https://hc-ping.com/${HEALTHCHECKS_PING_KEY}/${HEALTHCHECKS_SLUG}/${EXIT_STATUS}'

@@ -1,0 +1,64 @@
+- name: Install Packages
+  ansible.builtin.apt:
+    name:
+      - zfs-dkms
+      - zfsutils-linux
+      - sanoid
+
+- name: Load Kernel Modules
+  ansible.builtin.command: modprobe --first-time zfs
+  register: result
+  changed_when:
+    - result.rc == 0
+  failed_when:
+    - result.rc != 0
+    - "'already' not in result.stderr"
+
+- name: Import Pool
+  ansible.builtin.script: >
+    import-pool.sh
+    {{ item.value.device | quote }}
+    {{ item.key | quote }}
+  register: result
+  changed_when: "'already' not in result.stdout"
+  loop: '{{ zfs_pools | dict2items }}'
+  loop_control:
+    label: '{{ item.key }}'
+
+- name: Create Sanoid Configuration Directory
+  ansible.builtin.file:
+    path: /etc/sanoid
+    state: directory
+    mode: ''
+
+- name: Create Sanoid Configuration
+  ansible.builtin.template:
+    src: sanoid.conf.j2
+    dest: /etc/sanoid/sanoid.conf
+    mode: ''
+
+- name: Create zpool-scrub systemd Service
+  ansible.builtin.template:
+    src: zpool-scrub@.service.j2
+    dest: /etc/systemd/system/zpool-scrub@.service
+    mode: ''
+  notify: restart_timers
+
+- name: Create zpool-scrub systemd Timer
+  ansible.builtin.template:
+    src: zpool-scrub@.timer.j2
+    dest: /etc/systemd/system/zpool-scrub@{{ item.key }}.timer
+    mode: ''
+  loop: "{{ zfs_pools | dict2items | selectattr('value.scrub_schedule', 'defined') }}"
+  loop_control:
+    label: '{{ item.key }}'
+  notify: restart_timers
+
+- name: Enable zpool-scrub systemd Timer
+  ansible.builtin.systemd:
+    name: zpool-scrub@{{ item.key }}.timer
+    enabled: true
+    state: started
+  loop: "{{ zfs_pools | dict2items | selectattr('value.scrub_schedule', 'defined') }}"
+  loop_control:
+    label: '{{ item.key }}'

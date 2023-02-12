@@ -1,0 +1,9 @@
+- name: Restart zpool-scrub systemd Timer
+  listen: restart_timers
+  ansible.builtin.systemd:
+    name: zpool-scrub@{{ item.key }}.timer
+    daemon_reload: true
+    state: restarted
+  loop: "{{ zfs_pools | dict2items | selectattr('value.scrub_schedule', 'defined') }}"
+  loop_control:
+    label: '{{ item.key }}'

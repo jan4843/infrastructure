@@ -1,0 +1,17 @@
+zfs_pools:
+  tank:
+    device: /dev/disk/by-label/tank
+    scrub_schedule: Sun 4:00
+
+sanoid_config:
+  tank/archive:
+    autosnap: true
+    daily: 99999999
+  tank/media:
+    autosnap: true
+    autoprune: true
+    daily: 30
+  tank/sync:
+    autosnap: true
+    autoprune: true
+    hourly: 720

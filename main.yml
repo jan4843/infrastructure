@@ -19,6 +19,10 @@
   roles: [heartbeat]
   hosts: [all]
 
+- name: Apply zfs role
+  roles: [zfs]
+  hosts: [home2]
+
 - name: Apply docker role
   roles: [docker]
   hosts: [all]

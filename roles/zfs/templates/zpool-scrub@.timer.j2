@@ -1,0 +1,6 @@
+[Timer]
+Unit=%N.service
+OnCalendar={{ item.value.scrub_schedule }}
+
+[Install]
+WantedBy=timers.target

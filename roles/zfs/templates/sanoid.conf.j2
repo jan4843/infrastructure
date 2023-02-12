@@ -1,0 +1,6 @@
+{% for dataset, config in sanoid_config.items() %}
+[{{ dataset }}]
+{% for k, v in config.items() %}
+{{ k }} = {{ v }}
+{% endfor %}
+{% endfor %}
