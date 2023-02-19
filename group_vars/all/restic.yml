@@ -13,4 +13,8 @@ restic_files:
 restic_backup_options:
   exclude_if_present: .nobackup
   exclude_larger_than: 128M
+restic_forget_options:
+  prune: true
+  group_by: ''
+  keep_within: 1y
 restic_schedule: 03:00

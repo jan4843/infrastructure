@@ -1,9 +1,10 @@
 [Service]
 Type=oneshot
+
 EnvironmentFile=/etc/default/%N
-EnvironmentFile=/etc/default/healthchecks
-
 ExecStart=restic backup $RESTIC_BACKUP_OPTIONS $RESTIC_FILES
+ExecStart=restic forget $RESTIC_FORGET_OPTIONS
 
+EnvironmentFile=/etc/default/healthchecks
 ExecStartPre=-curl --output /dev/null --silent --retry 3 https://hc-ping.com/${HEALTHCHECKS_PING_KEY}/%H-%N/start
 ExecStopPost=-sh -c 'curl --output /dev/null --silent --retry 3 --data "$(journalctl --output=cat _SYSTEMD_INVOCATION_ID="$(systemctl show -P InvocationID %n)")" https://hc-ping.com/${HEALTHCHECKS_PING_KEY}/%H-%N/${EXIT_STATUS}'
