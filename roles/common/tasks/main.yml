@@ -18,8 +18,8 @@
 
 - name: Import Debian Tasks
   ansible.builtin.import_tasks: debian.yml
-  when: ansible_distribution == 'Debian'
+  when: ansible_lsb.id == 'Debian'
 
 - name: Import Ubuntu Tasks
   ansible.builtin.import_tasks: ubuntu.yml
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_lsb.id == 'Ubuntu'
