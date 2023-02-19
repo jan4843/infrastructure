@@ -15,10 +15,6 @@
   roles: [dotfiles]
   hosts: [all]
 
-- name: Apply heartbeat role
-  roles: [heartbeat]
-  hosts: [all]
-
 - name: Apply zfs role
   roles: [zfs]
   hosts: [home2]
@@ -31,6 +27,14 @@
   roles: [vector]
   hosts: [all]
 
+- name: Apply tailscale role
+  roles: [tailscale]
+  hosts: [aux, home]
+
+- name: Apply wireguard role
+  roles: [wireguard]
+  hosts: [home]
+
 - name: Apply restic role
   roles: [restic]
   hosts: [all]
@@ -39,10 +43,6 @@
   roles: [services]
   hosts: [all]
 
-- name: Apply tailscale role
-  roles: [tailscale]
-  hosts: [aux, home]
-
-- name: Apply wireguard role
-  roles: [wireguard]
-  hosts: [home]
+- name: Apply heartbeat role
+  roles: [heartbeat]
+  hosts: [all]
