@@ -1,0 +1,4 @@
+[Service]
+Type=oneshot
+ExecStart=sh -c 'for dir in {{ services_root }}/*; do if [ -d "$dir" ]; then ln -fs "$dir/crontab" "/etc/cron.d/service-$(printf %%s "$dir" | md5sum - | cut -d\\  -f1)"; fi; done'
+ExecStart=sh -c 'for link in /etc/cron.d/service-*; do if [ -L "$link" ] && ! [ -e "$(dirname "$(realpath -m "$link")")" ]; then rm "$link"; fi; done'

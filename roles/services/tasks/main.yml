@@ -13,15 +13,18 @@
   changed_when: "'Starting' in result.stdout"
   loop: '{{ services.stdout_lines }}'
 
-- name: Create Services crontab
-  ansible.builtin.copy:
-    dest: '{{ services_root }}/crontab'
-    content: ''
-    force: false
+- name: Create link-services-crontabs systemd Unit
+  ansible.builtin.template:
+    src: link-services-crontabs.{{ item }}.j2
+    dest: /etc/systemd/system/link-services-crontabs.{{ item }}
     mode: ''
+  loop:
+    - path
+    - service
+  notify: link_services_crontabs
 
-- name: Link Services crontab
-  ansible.builtin.file:
-    path: /etc/cron.d/services
-    src: '{{ services_root }}/crontab'
-    state: link
+- name: Enable link-services-crontabs systemd Path
+  ansible.builtin.systemd:
+    name: link-services-crontabs.path
+    enabled: true
+    state: started
