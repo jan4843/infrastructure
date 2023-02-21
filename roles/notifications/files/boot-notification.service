@@ -1,0 +1,7 @@
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/default/ntfy
+ExecStart=sh -c 'until curl -f "https://ntfy.sh/${NTFY_TOPIC}/trigger?title=%H&message=Booted"; do sleep 1; done'
+
+[Install]
+WantedBy=multi-user.target

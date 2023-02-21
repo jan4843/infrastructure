@@ -1,0 +1,33 @@
+- name: Create Healthchecks Environment File
+  ansible.builtin.copy:
+    content: |
+      HEALTHCHECKS_PING_KEY={{ healthchecks_ping_key | quote }}
+    dest: /etc/default/healthchecks
+    mode: go-r
+
+- name: Create ntfy Environment File
+  ansible.builtin.copy:
+    content: |
+      NTFY_TOPIC={{ ntfy_topic | quote }}
+    dest: /etc/default/ntfy
+    mode: go-r
+
+- name: Create systemd Service
+  ansible.builtin.copy:
+    src: '{{ item }}.service'
+    dest: /etc/systemd/system/{{ item }}.service
+    mode: ''
+  loop:
+    - boot-notification
+    - heartbeat
+
+- name: Enable Heartbeat systemd Service
+  ansible.builtin.systemd:
+    name: heartbeat.service
+    enabled: true
+    state: started
+
+- name: Enable Boot Notification systemd Service
+  ansible.builtin.systemd:
+    name: boot-notification.service
+    enabled: true

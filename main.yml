@@ -43,6 +43,6 @@
   roles: [services]
   hosts: [all]
 
-- name: Apply heartbeat role
-  roles: [heartbeat]
+- name: Apply notifications role
+  roles: [notifications]
   hosts: [all]

@@ -1,0 +1,6 @@
+[Service]
+EnvironmentFile=/etc/default/healthchecks
+ExecStart=sh -c 'while :; do curl -s "https://hc-ping.com/${HEALTHCHECKS_PING_KEY}/%H"; sleep 60; done'
+
+[Install]
+WantedBy=multi-user.target
