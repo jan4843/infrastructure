@@ -16,29 +16,29 @@ tags ?= all
 
 .SILENT:
 
-run: _secrets _image _lint
+run: secrets image lint
 	$(CONTAINER) ansible-playbook main.yml \
 		--limit $(host) \
 		--tags $(tags)
 
-debug: _image
+debug: image
 	$(CONTAINER) ansible $(host) \
 		--module-name ansible.builtin.setup
 	$(CONTAINER) ansible $(host) \
 		--module-name ansible.builtin.debug \
 		--args var=hostvars[inventory_hostname]
 
-shell: _image
+shell: image
 	$(CONTAINER) bash
 
 clean:
 	! docker image inspect ansible >/dev/null 2>&1 || \
 	docker image rm ansible
 
-_lint: _image
+lint: image
 	$(CONTAINER) ansible-lint -qq --strict --offline
 
-_secrets:
+secrets:
 	for secret in $$(grep -Eor '^(.+):.+secret_\1' *_vars | cut -d: -f1,2); do \
 		file="$${secret%%.*}_secrets.yml"; \
 		var="secret_$${secret##*:}"; \
@@ -48,6 +48,6 @@ _secrets:
 		echo "$$var: $$value" >> "$$file"; \
 	done
 
-_image:
+image:
 	docker image inspect ansible >/dev/null 2>&1 || \
 	docker image build --tag ansible .
