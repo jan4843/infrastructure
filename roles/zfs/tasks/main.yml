@@ -1,6 +1,7 @@
 - name: Install Packages
   ansible.builtin.apt:
     name:
+      - linux-headers-{{ ansible_kernel }}
       - zfs-dkms
       - zfsutils-linux
       - sanoid
