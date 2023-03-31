@@ -6,11 +6,12 @@ zfs_pools:
 sanoid_config:
   tank/archive:
     autosnap: true
+    autoprune: true
     daily: 99999999
   tank/media:
     autosnap: true
     autoprune: true
-    daily: 30
+    daily: 7
   tank/sync:
     autosnap: true
     autoprune: true
