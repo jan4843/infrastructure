@@ -1,48 +1,73 @@
 - name: Bootstrap
   roles: [bootstrap]
-  hosts: [all]
   strategy: linear
+  tags: [always]
+  hosts:
+    - all
 
 - name: Gather Facts
   gather_facts: true
-  hosts: [all]
+  tags: [always]
+  hosts:
+    - all
 
 - name: Apply common role
   roles: [common]
-  hosts: [all]
+  tags: [common]
+  hosts:
+    - all
 
 - name: Apply dotfiles role
   roles: [dotfiles]
-  hosts: [all]
+  tags: [dotfiles]
+  hosts:
+    - all
 
 - name: Apply zfs role
   roles: [zfs]
-  hosts: [home2]
+  tags: [zfs]
+  hosts:
+    - home2
 
 - name: Apply docker role
   roles: [docker]
-  hosts: [all]
+  tags: [docker]
+  hosts:
+    - all
 
 - name: Apply vector role
   roles: [vector]
-  hosts: [all]
+  tags: [vector]
+  hosts:
+    - all
 
 - name: Apply tailscale role
   roles: [tailscale]
-  hosts: [aux, home]
+  tags: [tailscale]
+  hosts:
+    - aux
+    - home
 
 - name: Apply wireguard role
   roles: [wireguard]
-  hosts: [home]
+  tags: [wireguard]
+  hosts:
+    - home
 
 - name: Apply restic role
   roles: [restic]
-  hosts: [all]
+  tags: [restic]
+  hosts:
+    - all
 
 - name: Apply services role
   roles: [services]
-  hosts: [all]
+  tags: [services]
+  hosts:
+    - all
 
 - name: Apply notifications role
   roles: [notifications]
-  hosts: [all]
+  tags: [notifications]
+  hosts:
+    - all

@@ -12,11 +12,14 @@ ifndef host
 host = $(error Missing value for variable `host')
 endif
 
+tags ?= all
+
 .SILENT:
 
 run: _secrets _image _lint
 	$(CONTAINER) ansible-playbook main.yml \
-		--limit $(host)
+		--limit $(host) \
+		--tags $(tags)
 
 debug: _image
 	$(CONTAINER) ansible $(host) \
