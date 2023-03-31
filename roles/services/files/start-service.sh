@@ -1,5 +1,9 @@
-#!/bin/sh
+#!/bin/sh -e
 
-cd "$1" || exit 1
-make install
+cd "$1"
+
+if [ -e Makefile ]; then
+	make install
+fi
+
 docker compose up --detach
