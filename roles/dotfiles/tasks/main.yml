@@ -1,7 +1,16 @@
 - name: Install dotfiles
-  ansible.builtin.script: install-dotfiles.sh {{ dotfiles_repo | quote }}
-  register: result
-  changed_when: "'already' not in result.stdout"
+  ansible.builtin.shell:
+    cmd: |
+      set -e
+      export GIT_DIR={{ dotfiles_dir | quote }}
+      export GIT_WORK_TREE="$HOME"
+      git clone --bare {{ dotfiles_repo | quote }} "$GIT_DIR"
+      git config status.showUntrackedFiles no
+      git checkout --force
+      git submodule update --init --recursive
+    creates: '{{ dotfiles_dir }}'
+  vars:
+    dotfiles_dir: '{{ ansible_user_dir }}/.local/src/dotfiles.git'
 
 - name: Install Utilities
   ansible.builtin.apt:
