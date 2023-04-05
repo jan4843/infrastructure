@@ -3,6 +3,6 @@
     command -v python3 >/dev/null && exit
 
     apt-get update &&
-    apt-get install --yes python3-minimal
+    apt-get install --yes python3-apt
   register: result
   changed_when: result.stdout != ''
