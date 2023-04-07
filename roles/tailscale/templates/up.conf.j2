@@ -1,0 +1,8 @@
+[Service]
+EnvironmentFile=/etc/default/tailscale
+ExecStartPost=tailscale up --reset --authkey=${TAILSCALE_AUTH_KEY} $TAILSCALE_OPTIONS
+
+{% if tailscale_force_derp %}
+ExecStartPre=iptables --insert=INPUT --proto=udp --destination-port=41641 --jump=DROP
+ExecStopPost=iptables --delete=INPUT --proto=udp --destination-port=41641 --jump=DROP
+{% endif %}

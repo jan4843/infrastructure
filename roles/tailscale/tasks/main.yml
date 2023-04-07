@@ -34,10 +34,11 @@
     mode: ''
 
 - name: Copy systemd Drop-In
-  ansible.builtin.copy:
-    src: up.conf
+  ansible.builtin.template:
+    src: up.conf.j2
     dest: /etc/systemd/system/tailscaled.service.d/up.conf
     mode: ''
+  notify: restart_tailscale
 
 - name: Enable IP Forwarding
   ansible.posix.sysctl:
