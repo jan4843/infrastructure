@@ -1,0 +1,12 @@
+[Unit]
+After=network.target
+
+[Service]
+DynamicUser=yes
+StateDirectory=%N
+WorkingDirectory=%S/%N
+EnvironmentFile=/etc/default/%N
+ExecStart=vmagent -envflag.enable=true
+
+[Install]
+WantedBy=multi-user.target

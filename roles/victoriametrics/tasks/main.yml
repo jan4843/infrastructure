@@ -1,0 +1,69 @@
+- name: Install Exporters
+  ansible.builtin.apt:
+    name:
+      - cadvisor
+      - prometheus-node-exporter
+
+- name: Install Binary
+  ansible.builtin.unarchive:
+    src: https://github.com/VictoriaMetrics/VictoriaMetrics/releases/download/v{{ vmagent_version }}/vmutils-linux-{{ arch }}-v{{ vmagent_version }}.tar.gz
+    dest: /usr/local/bin
+    include: [vmagent-prod]
+    owner: root
+    group: root
+    extra_opts:
+      - --transform=s,vmagent-prod,vmagent@{{ vmagent_version }},
+    remote_src: true
+    creates: /usr/local/bin/vmagent@{{ vmagent_version }}
+  vars:
+    arch: "{{ {'x86_64': 'amd64', 'aarch64': 'arm64', 'armv7l': 'arm'}[ansible_architecture] }}"
+
+- name: Link Binary
+  ansible.builtin.shell:
+    chdir: /usr/local/bin
+    cmd: |
+      [ "$(realpath vmagent)" = "$PWD/vmagent@{{ vmagent_version }}" ] && exit 100
+      rm -r "$(realpath vmagent)"
+      ln -fs vmagent@{{ vmagent_version }} vmagent
+  register: result
+  changed_when: result.rc != 100
+  failed_when: result.rc not in [0, 100]
+  notify: restart_vmagent
+
+- name: Create systemd Service
+  ansible.builtin.copy:
+    src: vmagent.service
+    dest: /etc/systemd/system/vmagent.service
+    mode: ''
+  notify: restart_vmagent
+
+- name: Create Environment File
+  ansible.builtin.copy:
+    content: |
+      SERVICES_ROOT={{ services_root | quote }}
+      promscrape_config=/etc/vmagent/prometheus.yml
+      remoteWrite_url={{ prometheus_endpoint | quote }}/api/prom/push
+      remoteWrite_label=instance={{ inventory_hostname }}
+    dest: /etc/default/vmagent
+    mode: go-r
+  notify: restart_vmagent
+
+- name: Create Configuration Directory
+  ansible.builtin.file:
+    path: /etc/vmagent
+    state: directory
+    mode: ''
+
+- name: Create Configuration
+  ansible.builtin.copy:
+    src: prometheus.yml
+    dest: /etc/vmagent/prometheus.yml
+    mode: ''
+  notify: restart_vmagent
+
+- name: Enable systemd Service
+  ansible.builtin.systemd:
+    name: vmagent.service
+    daemon_reload: true
+    enabled: true
+    state: started

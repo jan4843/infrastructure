@@ -1,0 +1,3 @@
+prometheus_username: '{{ secret_prometheus_username }}'
+prometheus_password: '{{ secret_prometheus_password }}'
+prometheus_endpoint: https://{{ prometheus_username }}:{{ prometheus_password }}@prometheus-prod-01-eu-west-0.grafana.net

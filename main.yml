@@ -35,6 +35,12 @@
   hosts:
     - all
 
+- name: Apply victoriametrics role
+  roles: [victoriametrics]
+  tags: [victoriametrics]
+  hosts:
+    - all
+
 - name: Apply vector role
   roles: [vector]
   tags: [vector]
