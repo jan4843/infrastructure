@@ -5,12 +5,6 @@
   hosts:
     - all
 
-- name: Gather Facts
-  gather_facts: true
-  tags: [always]
-  hosts:
-    - all
-
 - name: Apply common role
   roles: [common]
   tags: [common]

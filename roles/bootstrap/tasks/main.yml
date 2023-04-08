@@ -6,3 +6,6 @@
     apt-get install --yes python3-apt
   register: result
   changed_when: result.stdout != ''
+
+- name: Gather Facts
+  ansible.builtin.gather_facts:
