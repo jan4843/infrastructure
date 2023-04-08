@@ -2,6 +2,4 @@
   listen: restart_vector
   ansible.builtin.systemd:
     name: vector.service
-    daemon_reload: true
-    enabled: true
     state: restarted

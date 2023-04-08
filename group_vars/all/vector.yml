@@ -1,7 +1,3 @@
-vector_loki_endpoint: https://logs-prod-eu-west-0.grafana.net
-vector_loki_username: '{{ secret_vector_loki_username }}'
-vector_loki_password: '{{ secret_vector_loki_password }}'
-
-vector_prometheus_endpoint: https://prometheus-prod-01-eu-west-0.grafana.net
-vector_prometheus_username: '{{ secret_vector_prometheus_username }}'
-vector_prometheus_password: '{{ secret_vector_prometheus_password }}'
+loki_username: '{{ secret_loki_username }}'
+loki_password: '{{ secret_loki_password }}'
+loki_endpoint: https://{{ loki_username }}:{{ loki_password }}@logs-prod-eu-west-0.grafana.net

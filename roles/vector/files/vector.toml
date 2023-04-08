@@ -1,0 +1,55 @@
+[sources.journald_logs_raw]
+type = "journald"
+
+[transforms.journald_logs]
+type = "remap"
+inputs = ["journald_logs_raw"]
+source = '''
+if ._SYSTEMD_UNIT == "docker.service" && exists(.CONTAINER_ID) {
+  abort
+}
+level = "unknown"
+priority = to_int(.PRIORITY) ?? 99
+if priority <= 2 { level = "critical" } else
+if priority == 3 { level = "error" } else
+if priority == 4 { level = "warning" } else
+if priority <= 6 { level = "info" } else
+if priority == 7 { level = "debug" }
+. = {
+  "host": .host,
+  "source": "journald",
+  "level": level,
+  "service": ._SYSTEMD_UNIT || .SYSLOG_IDENTIFIER || ._COMM,
+  "message": .message
+}
+'''
+
+[transforms.docker_logs]
+type = "remap"
+inputs = ["journald_logs_raw"]
+source = '''
+if !starts_with(
+  to_string(.COM_DOCKER_COMPOSE_PROJECT_WORKING_DIR) ?? "",
+  get_env_var!("SERVICES_ROOT") + "/"
+) {
+  abort
+}
+. = {
+  "host": .host,
+  "source": "docker",
+  "level": "unknown",
+  "service": .CONTAINER_NAME,
+  "message": .message
+}
+'''
+
+[sinks.loki]
+type = "loki"
+inputs = ["*_logs"]
+encoding.codec = "text"
+endpoint = "$LOKI_ENDPOINT"
+labels.host = "{{ host }}"
+labels.source = "{{ source }}"
+labels.service = "{{ service }}"
+labels.level = "{{ level }}"
+remove_label_fields = true

@@ -1,0 +1,12 @@
+[Unit]
+After=network.target
+
+[Service]
+DynamicUser=yes
+Group=systemd-journal
+StateDirectory=%N
+EnvironmentFile=/etc/default/%N
+ExecStart=vector
+
+[Install]
+WantedBy=multi-user.target
