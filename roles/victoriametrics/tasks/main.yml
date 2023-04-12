@@ -3,6 +3,7 @@
     name:
       - cadvisor
       - prometheus-node-exporter
+    install_recommends: false
 
 - name: Install Binary
   ansible.builtin.unarchive:
