@@ -21,7 +21,7 @@
   roles: [zfs]
   tags: [zfs]
   hosts:
-    - home2
+    - home
 
 - name: Apply docker role
   roles: [docker]

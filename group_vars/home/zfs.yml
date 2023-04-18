@@ -7,12 +7,14 @@ sanoid_config:
   tank/archive:
     autosnap: true
     autoprune: true
+    hourly: 0
     daily: 99999999
+    monthly: 0
+    yearly: 0
   tank/media:
     autosnap: true
     autoprune: true
+    hourly: 0
     daily: 7
-  tank/sync:
-    autosnap: true
-    autoprune: true
-    hourly: 720
+    monthly: 0
+    yearly: 0

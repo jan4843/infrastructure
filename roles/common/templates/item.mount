@@ -1,3 +1,0 @@
-[Mount]
-What={{ item.value.device }}
-Where={{ item.value.mount_point }}

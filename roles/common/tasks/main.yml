@@ -4,9 +4,6 @@
 - name: Import Hostname Tasks
   ansible.builtin.import_tasks: hostname.yml
 
-- name: Import Mounts Tasks
-  ansible.builtin.import_tasks: mounts.yml
-
 - name: Import systemd Tasks
   ansible.builtin.import_tasks: systemd.yml
 
