@@ -1,8 +1,8 @@
 [Service]
 EnvironmentFile=/etc/default/tailscale
 ExecStartPost=tailscale up --reset --authkey=${TAILSCALE_AUTH_KEY} $TAILSCALE_OPTIONS
+ExecStartPost=iptables -t mangle -A FORWARD -i tailscale0 -o {{ ansible_default_ipv4.interface }} -p tcp -m tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
 
 {% if tailscale_force_derp %}
-ExecStartPre=iptables --insert=INPUT --proto=udp --destination-port=41641 --jump=DROP
-ExecStopPost=iptables --delete=INPUT --proto=udp --destination-port=41641 --jump=DROP
+Environment=TS_DEBUG_ALWAYS_USE_DERP=1
 {% endif %}
