@@ -16,12 +16,16 @@
     - "'already' not in result.stderr"
 
 - name: Import Pool
-  ansible.builtin.script: >
-    import-pool.sh
-    {{ item.value.device | quote }}
+  ansible.builtin.command: >
+    zpool import -f
+    -d {{ item.value.device | quote }}
     {{ item.key | quote }}
   register: result
-  changed_when: "'already' not in result.stdout"
+  changed_when:
+    - result.rc == 0
+  failed_when:
+    - result.rc != 0
+    - "'already' not in result.stderr"
   loop: '{{ zfs_pools | dict2items }}'
   loop_control:
     label: '{{ item.key }}'
