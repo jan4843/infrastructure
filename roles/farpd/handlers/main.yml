@@ -1,0 +1,6 @@
+- name: Restart
+  ansible.builtin.systemd:
+    name: arpd.service
+    daemon_reload: true
+    state: restarted
+  listen: restart_farpd

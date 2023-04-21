@@ -54,6 +54,12 @@
   hosts:
     - home
 
+- name: Apply farpd role
+  roles: [farpd]
+  tags: [farpd]
+  hosts:
+    - home
+
 - name: Apply restic role
   roles: [restic]
   tags: [restic]

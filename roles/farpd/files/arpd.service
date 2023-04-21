@@ -1,0 +1,10 @@
+[Unit]
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/default/farpd
+ExecStart=farpd -d $NETWORK
+KillSignal=SIGKILL
+
+[Install]
+WantedBy=multi-user.target
