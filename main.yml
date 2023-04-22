@@ -1,7 +1,7 @@
 - name: Bootstrap
   roles: [bootstrap]
   strategy: linear
-  tags: [always]
+  tags: [bootstrap, always]
   hosts:
     - all
 
