@@ -9,3 +9,10 @@
   ansible.builtin.systemd:
     name: containerd.service
     state: restarted
+
+- name: Restart Exporter
+  listen: restart_exporter
+  ansible.builtin.systemd:
+    name: docker-stats-exporter.service
+    daemon_reload: true
+    state: restarted

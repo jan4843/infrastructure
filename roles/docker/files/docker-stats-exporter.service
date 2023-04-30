@@ -1,0 +1,12 @@
+[Unit]
+Wants=docker.socket
+
+[Service]
+DynamicUser=yes
+Group=docker
+Environment=LABEL_state='{{.Container.State}}'
+Environment=LABEL_compose_workdir='{{index .Container.Labels "com.docker.compose.project.working_dir"}}'
+ExecStart=docker-stats-exporter
+
+[Install]
+WantedBy=multi-user.target

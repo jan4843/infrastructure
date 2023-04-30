@@ -48,3 +48,34 @@
   ansible.builtin.file:
     path: /opt/containerd
     state: absent
+
+- name: Install Exporter
+  ansible.builtin.get_url:
+    url: https://github.com/jan4843/docker_stats_exporter/releases/download/v0.1.0/docker_stats_exporter-v0.1.0-linux-{{ arch[ansible_architecture] }}
+    dest: /usr/local/bin/docker-stats-exporter
+    mode: +x
+    checksum: sha1:{{ checksum[ansible_architecture] }}
+  vars:
+    arch:
+      x86_64: amd64
+      aarch64: arm64
+      armv7l: arm
+    checksum:
+      x86_64: 7f653295df334287499a2b392b30b46e169562d5
+      aarch64: 23224503c7e4c040555f6f62ba95012210e4619b
+      armv7l: 5584488b76fad668c5d6ec46d1be9eb200c1f4c9
+  notify: restart_exporter
+
+- name: Create Exporter systemd Service
+  ansible.builtin.copy:
+    src: docker-stats-exporter.service
+    dest: /etc/systemd/system/docker-stats-exporter.service
+    mode: ''
+  notify: restart_exporter
+
+- name: Enable Exporter systemd Service
+  ansible.builtin.systemd:
+    name: docker-stats-exporter.service
+    daemon_reload: true
+    enabled: true
+    state: started

@@ -1,8 +1,6 @@
-- name: Install Exporters
+- name: Install Node Exporter
   ansible.builtin.apt:
-    name:
-      - cadvisor
-      - prometheus-node-exporter
+    name: prometheus-node-exporter
     install_recommends: false
 
 - name: Install Binary
