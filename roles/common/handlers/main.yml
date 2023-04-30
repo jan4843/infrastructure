@@ -4,12 +4,6 @@
     name: ssh.service
     state: restarted
 
-- name: Restart journald
-  listen: restart_journald
-  ansible.builtin.systemd:
-    name: systemd-journald.service
-    state: restarted
-
 - name: Update apt
   listen: update_apt
   ansible.builtin.apt:
