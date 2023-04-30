@@ -1,8 +1,9 @@
 - name: Update Hosts File
-  ansible.builtin.replace:
+  ansible.builtin.blockinfile:
     path: /etc/hosts
-    regexp: '^([^#]+?\s+){{ ansible_hostname | regex_escape }}(\s+.*)?$'
-    replace: '\1{{ inventory_hostname }}\2'
+    block: |
+      127.0.0.1 {{ inventory_hostname }}
+      ::1 {{ inventory_hostname }}
 
 - name: Set Hostname
   ansible.builtin.hostname:
