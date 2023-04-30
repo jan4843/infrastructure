@@ -1,0 +1,25 @@
+- name: Update Hosts File
+  ansible.builtin.replace:
+    path: /etc/hosts
+    regexp: '^([^#]+?\s+){{ ansible_hostname | regex_escape }}(\s+.*)?$'
+    replace: '\1{{ inventory_hostname }}\2'
+
+- name: Set Hostname
+  ansible.builtin.hostname:
+    name: '{{ inventory_hostname }}'
+
+- name: Toggle IPv6
+  ansible.posix.sysctl:
+    name: '{{ item }}'
+    value: '1'
+    state: "{{ disable_ipv6 is defined and disable_ipv6 | ternary('present', 'absent') }}"
+  loop:
+    - net.ipv6.conf.all.disable_ipv6
+    - net.ipv6.conf.default.disable_ipv6
+
+- name: Set Timezone
+  ansible.builtin.shell: |
+    timedatectl show --property=Timezone --value &&
+    timedatectl set-timezone {{ timezone | quote }}
+  register: result
+  changed_when: result.stdout != timezone

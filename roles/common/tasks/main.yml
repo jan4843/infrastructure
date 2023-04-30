@@ -1,14 +1,11 @@
 - name: Import Depedencies Tasks
   ansible.builtin.import_tasks: dependencies.yml
 
-- name: Import Hostname Tasks
-  ansible.builtin.import_tasks: hostname.yml
+- name: Import System Tasks
+  ansible.builtin.import_tasks: system.yml
 
 - name: Import SSH Tasks
   ansible.builtin.import_tasks: ssh.yml
-
-- name: Import Timezone Tasks
-  ansible.builtin.import_tasks: timezone.yml
 
 - name: Import Debian Tasks
   ansible.builtin.import_tasks: debian.yml

@@ -1,6 +1,0 @@
-- name: Set Timezone
-  ansible.builtin.shell: |
-    timedatectl show --property=Timezone --value &&
-    timedatectl set-timezone {{ timezone | quote }}
-  register: result
-  changed_when: result.stdout != timezone
