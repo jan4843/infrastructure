@@ -19,6 +19,7 @@
       - file
       - htop
       - jq
+      - ncdu
       - psmisc
       - rsync
       - tmux
