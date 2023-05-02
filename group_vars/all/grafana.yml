@@ -1,3 +1,7 @@
 prometheus_username: '{{ secret_prometheus_username }}'
 prometheus_password: '{{ secret_prometheus_password }}'
 prometheus_endpoint: https://{{ prometheus_username }}:{{ prometheus_password }}@prometheus-prod-01-eu-west-0.grafana.net
+
+loki_username: '{{ secret_loki_username }}'
+loki_password: '{{ secret_loki_password }}'
+loki_endpoint: https://{{ loki_username }}:{{ loki_password }}@logs-prod-eu-west-0.grafana.net
