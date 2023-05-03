@@ -1,0 +1,12 @@
+{
+  servers {
+    metrics
+  }
+  {{ caddy_global_config | indent(2, false) -}}
+}
+
+{% for site, config in caddy_sites_config.items() %}
+{{ site }} {
+  {{ config | indent(2, false) -}}
+}
+{% endfor %}

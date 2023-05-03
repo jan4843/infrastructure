@@ -1,0 +1,19 @@
+[Service]
+Type=notify
+
+DynamicUser=yes
+Group=docker
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+
+StateDirectory=%N
+RuntimeDirectory=%N
+Environment=XDG_DATA_HOME=/var/lib
+Environment=XDG_CONFIG_HOME=/run
+Environment=HOME=/dev/null
+
+EnvironmentFile=/etc/default/%N
+
+ExecStart=caddy docker-proxy --caddyfile-path=/etc/caddy/Caddyfile --ingress-networks=host
+
+[Install]
+WantedBy=multi-user.target

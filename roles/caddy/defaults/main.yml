@@ -1,0 +1,4 @@
+caddy_modules: []
+caddy_global_config: ''
+caddy_sites_config: {}
+caddy_env: {}

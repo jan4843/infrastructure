@@ -1,0 +1,53 @@
+- name: Install Binary
+  ansible.builtin.shell:
+    cmd: |
+      set -e
+      curl -fsLo {{ dest_version | quote }} {{ url | quote }}
+      chmod +x {{ dest_version | quote }}
+      rm -f "$(realpath {{ dest | quote }})"
+      ln -fs {{ dest_version | quote }} {{ dest | quote }}
+    creates: '{{ dest_version }}'
+  vars:
+    arch: "{{ {'x86_64': 'amd64', 'aarch64': 'arm64', 'armv7l': 'arm'}[ansible_architecture] }}"
+    url: https://caddyserver.com/api/download?os=linux&arch={{ arch }}&p={{ (caddy_base_modules + caddy_modules) | sort | join('&p=') }}
+    dest: /usr/local/bin/caddy
+    dest_version: '{{ dest }}@{{ url | hash }}'
+  notify: restart_caddy
+
+- name: Create systemd Service
+  ansible.builtin.copy:
+    src: caddy.service
+    dest: /etc/systemd/system/caddy.service
+    mode: ''
+  notify: restart_caddy
+
+- name: Create Environment File
+  ansible.builtin.copy:
+    content: |
+      {% for key, value in caddy_env.items() %}
+      {{ key }}={{ value | quote }}
+      {% endfor %}
+    dest: /etc/default/caddy
+    mode: go-r
+  notify: restart_caddy
+
+- name: Create Configuration Directory
+  ansible.builtin.file:
+    path: /etc/caddy
+    state: directory
+    mode: ''
+
+- name: Create Configuration
+  ansible.builtin.template:
+    src: Caddyfile.j2
+    dest: /etc/caddy/Caddyfile
+    mode: ''
+    validate: caddy validate --adapter=caddyfile --config=%s
+  notify: restart_caddy
+
+- name: Enable systemd Service
+  ansible.builtin.systemd:
+    name: caddy.service
+    daemon_reload: true
+    enabled: true
+    state: started

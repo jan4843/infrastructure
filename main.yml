@@ -29,6 +29,12 @@
   hosts:
     - all
 
+- name: Apply caddy role
+  roles: [caddy]
+  tags: [caddy]
+  hosts:
+    - all
+
 - name: Apply victoriametrics role
   roles: [victoriametrics]
   tags: [victoriametrics]

@@ -1,0 +1,20 @@
+caddy_modules:
+  - github.com/caddyserver/cache-handler@v0.7.0
+  - github.com/caddyserver/replace-response
+  - github.com/mholt/caddy-ratelimit
+
+caddy_global_config: |
+  order cache before rewrite
+  order rate_limit before basicauth
+  order replace after encode
+  cache {
+    nuts {
+      configuration {
+      }
+    }
+  }
+
+caddy_domain: '{{ secret_caddy_domain }}'
+caddy_env:
+  DOMAIN: '{{ caddy_domain }}'
+  FQDN: '{{ inventory_hostname }}.{{ caddy_domain }}'

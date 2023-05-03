@@ -1,0 +1,6 @@
+caddy_version: 2.6.4
+caddy_docker_proxy_version: 2.8.4
+
+caddy_base_modules:
+  - github.com/caddyserver/caddy/v2@v{{ caddy_version }}
+  - github.com/lucaslorentz/caddy-docker-proxy/v2@v{{ caddy_docker_proxy_version }}

@@ -15,3 +15,7 @@ scrape_configs:
         action: keep
       - regex: 'compose_workdir'
         action: labeldrop
+
+  - job_name: caddy
+    static_configs:
+      - targets: [localhost:2019]
