@@ -11,18 +11,27 @@
     mode: go-r
 
 - name: Initialize Repository
-  ansible.builtin.script: init-repo.sh
+  ansible.builtin.shell: |
+    set -ae
+    . /etc/default/restic
+    restic init --quiet
   register: result
   failed_when:
     - result.rc != 0
-    - "'already exists' not in result.stdout"
+    - "'already exists' not in result.stderr"
   changed_when:
     - result.rc == 0
 
 - name: Restore Backup
-  ansible.builtin.script: restore.sh {{ inventory_hostname | quote }}
-  register: result
-  changed_when: "'already restored' not in result.stdout"
+  ansible.builtin.shell:
+    cmd: |
+      set -ae
+      . /etc/default/restic
+      out=$(restic restore latest --target=/ --verify --quiet 2>&1) ||
+      printf %s "$out" | grep -q 'no snapshot found'
+      mkdir -p /var/lib/restic
+      touch /var/lib/restic/restored
+    creates: /var/lib/restic/restored
 
 - name: Create systemd Units
   ansible.builtin.template:
