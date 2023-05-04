@@ -168,7 +168,7 @@ dashboard = Dashboard(
             stacking={'mode': 'normal', 'group': 'A'},
             targets=[
                 Target(
-                    expr='node_memory_MemTotal_bytes{instance="$host"} - node_memory_MemFree_bytes{instance="$host"} - node_memory_Cached_bytes{instance="$host"} - node_memory_SReclaimable_bytes{instance="$host"} - node_memory_Buffers_bytes{instance="$host"} - ((node_zfs_arc_c{instance="$host"} - node_zfs_arc_c_min{instance="$host"}) or up * 0)',
+                    expr='node_memory_MemTotal_bytes{instance="$host"} - node_memory_MemFree_bytes{instance="$host"} - node_memory_Cached_bytes{instance="$host"} - node_memory_SReclaimable_bytes{instance="$host"} - node_memory_Buffers_bytes{instance="$host"} - (node_zfs_arc_size{instance="$host"} or up * 0)',
                     legendFormat='used',
                 ),
                 Target(
@@ -180,8 +180,8 @@ dashboard = Dashboard(
                     legendFormat='cache',
                 ),
                 Target(
-                    expr='(node_zfs_arc_c{instance="$host"} - node_zfs_arc_c_min{instance="$host"}) != 0',
-                    legendFormat='zfs',
+                    expr='node_zfs_arc_size{instance="$host"} != 0',
+                    legendFormat='arc',
                 ),
                 Target(
                     expr='node_memory_MemFree_bytes{instance="$host"}',
@@ -192,7 +192,7 @@ dashboard = Dashboard(
                 COLOR_OVERRIDE('used', 'orange'),
                 COLOR_OVERRIDE('buffers', 'purple'), LINE_DASH_OVERRIDE('buffers'),
                 COLOR_OVERRIDE('cache', 'yellow'), LINE_DASH_OVERRIDE('cache'),
-                COLOR_OVERRIDE('zfs', 'blue'), LINE_DASH_OVERRIDE('zfs'),
+                COLOR_OVERRIDE('arc', 'blue'), LINE_DASH_OVERRIDE('arc'),
                 COLOR_OVERRIDE('free', 'green'),
             ],
             **POSITION(h=8, w=12),
