@@ -13,6 +13,9 @@ scrape_configs:
       - source_labels: [compose_workdir]
         regex: '%{SERVICES_ROOT}/.*'
         action: keep
+      - source_labels: [compose_oneoff]
+        regex: 'True'
+        action: drop
       - regex: 'compose_workdir'
         action: labeldrop
 
