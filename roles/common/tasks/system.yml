@@ -18,6 +18,11 @@
     - net.ipv6.conf.all.disable_ipv6
     - net.ipv6.conf.default.disable_ipv6
 
+- name: Set inotify Watches Limit
+  ansible.posix.sysctl:
+    name: fs.inotify.max_user_watches
+    value: '524288'
+
 - name: Set Timezone
   ansible.builtin.shell: |
     timedatectl show --property=Timezone --value &&
