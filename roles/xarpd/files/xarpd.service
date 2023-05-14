@@ -3,9 +3,8 @@ After=network-online.target
 Wants=network-online.target
 
 [Service]
-EnvironmentFile=/etc/default/farpd
-ExecStart=farpd -d $NETWORK
-KillSignal=SIGKILL
+EnvironmentFile=/etc/default/xarpd
+ExecStart=xarpd $RESOLVERS
 
 [Install]
 WantedBy=multi-user.target

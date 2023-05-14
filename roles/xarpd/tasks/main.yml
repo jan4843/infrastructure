@@ -1,0 +1,38 @@
+- name: Install Binary
+  ansible.builtin.get_url:
+    url: https://github.com/jan4843/xarpd/releases/download/v0.1.0/xarpd-v0.1.0-linux-{{ arch[ansible_architecture] }}
+    dest: /usr/local/bin/xarpd
+    mode: +x
+    checksum: sha1:{{ checksum[ansible_architecture] }}
+  vars:
+    arch:
+      x86_64: amd64
+      aarch64: arm64
+      armv7l: arm
+    checksum:
+      x86_64: 4b8ab7840bfc2923cfdb75db8278cf839645f882
+      aarch64: 8561c0a50a1ee02ef936d4b13e9e31718011d167
+      armv7l: bcaf8ed6eda86440c7cda19ba0bc978171609b62
+  notify: restart_xarpd
+
+- name: Create Environment File
+  ansible.builtin.copy:
+    content: |
+      RESOLVERS={{ xarpd_resolvers | map('quote') | join(' ') | quote }}
+    dest: /etc/default/xarpd
+    mode: ''
+  notify: restart_xarpd
+
+- name: Create systemd Service
+  ansible.builtin.copy:
+    src: xarpd.service
+    dest: /etc/systemd/system/xarpd.service
+    mode: ''
+  notify: restart_xarpd
+
+- name: Enable systemd Service
+  ansible.builtin.systemd:
+    name: xarpd.service
+    daemon_reload: true
+    enabled: true
+    state: started

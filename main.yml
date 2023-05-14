@@ -60,9 +60,9 @@
   hosts:
     - home
 
-- name: Apply farpd role
-  roles: [farpd]
-  tags: [farpd]
+- name: Apply xarpd role
+  roles: [xarpd]
+  tags: [xarpd]
   hosts:
     - home
 
