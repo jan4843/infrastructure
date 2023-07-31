@@ -1,5 +1,5 @@
 caddy_modules:
-  - github.com/caddyserver/cache-handler@v0.7.0
+  - github.com/caddyserver/cache-handler@v0.8.0
   - github.com/caddyserver/replace-response
   - github.com/mholt/caddy-ratelimit
 
