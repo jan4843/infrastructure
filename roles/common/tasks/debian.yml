@@ -13,4 +13,5 @@
       - main
       - contrib
       - non-free
+      - non-free-firmware
   notify: update_apt
